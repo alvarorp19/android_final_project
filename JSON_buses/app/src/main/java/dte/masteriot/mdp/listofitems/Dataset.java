@@ -25,6 +25,8 @@ public class Dataset {
     private final static int TYPE_CAMARAS_LIST = 0;
     private final static int TYPE_GARDENS_LIST = 1;
 
+    private final static String URL_JSON_LINEAS_BUSES = "https://vitesia.mytrama.com/emtusasiri/lineas/lineas";
+
     private static final String TAG = "TAGListOfItems, Dataset";
     private List<Item> listofitems;
     private final int ITEM_COUNT = 8;
@@ -45,16 +47,16 @@ public class Dataset {
 //        }
 
         if(this.type == TYPE_CAMARAS_LIST){
-            xmlParser();
+            //xmlParser();
             for (int i = 0; i < camerasList.size(); ++i) {
                 listofitems.add(new Item(camerasList.get(i), camerasList.get(i) , (long) i));
             }
         }else if(this.type == TYPE_GARDENS_LIST){
             try {
                 JSONParser();
-                for (int i = 0; i < GardensList.size(); ++i) {
-                    listofitems.add(new Item(GardensList.get(i), GardensList.get(i) , (long) i));
-                }
+                //for (int i = 0; i < GardensList.size(); ++i) {
+                    //listofitems.add(new Item(GardensList.get(i), GardensList.get(i) , (long) i));
+                //}
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             } catch (IOException e) {
@@ -107,62 +109,68 @@ public class Dataset {
 //
 //    }
 
-    private void xmlParser(){
-
-        XmlPullParserFactory parserFactory;
-        try {
-            Log.d("XMLPARSER","init list");
-            parserFactory = XmlPullParserFactory.newInstance();
-            XmlPullParser parser = parserFactory.newPullParser();
-            AssetManager assetManager = this.context.getAssets();
-            InputStream is = assetManager.open("CCTV.kml");
-            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-            parser.setInput(is, null);
-            int eventType = parser.getEventType(); // current event state of the parser
-            while (eventType != XmlPullParser.END_DOCUMENT) {
-                String elementName = null;
-                elementName = parser.getName(); // name of the current element
-                switch (eventType) {
-                    case XmlPullParser.START_TAG:
-                        if ("Data".equals(elementName)) {
-                            String dataElement = parser.getAttributeValue(null,"name");
-                            if (("Nombre".equals(dataElement))){
-                                for (int i = 0; i<3;  i++){
-                                    parser.next();//avanzamos hasta el contenido de cada param
-                                }
-                                String cameraURL = parser.getText(); // if next element is TEXT then element content is returned
-                                camerasList.add( cameraURL );
-                                Log.d("XMLPARSER","tipo" + cameraURL);
-                            }
-                        }
-
-                    break;
-                }
-                eventType = parser.next(); // Get next parsing event
-            } // while()
-        } catch (Exception e) {
-            Log.d("XMLPARSER","Exception arises" + e);
-          }
-
-    }
+//    private void xmlParser(){
+//
+//        XmlPullParserFactory parserFactory;
+//        try {
+//            Log.d("XMLPARSER","init list");
+//            parserFactory = XmlPullParserFactory.newInstance();
+//            XmlPullParser parser = parserFactory.newPullParser();
+//            AssetManager assetManager = this.context.getAssets();
+//            InputStream is = assetManager.open("CCTV.kml");
+//            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+//            parser.setInput(is, null);
+//            int eventType = parser.getEventType(); // current event state of the parser
+//            while (eventType != XmlPullParser.END_DOCUMENT) {
+//                String elementName = null;
+//                elementName = parser.getName(); // name of the current element
+//                switch (eventType) {
+//                    case XmlPullParser.START_TAG:
+//                        if ("Data".equals(elementName)) {
+//                            String dataElement = parser.getAttributeValue(null,"name");
+//                            if (("Nombre".equals(dataElement))){
+//                                for (int i = 0; i<3;  i++){
+//                                    parser.next();//avanzamos hasta el contenido de cada param
+//                                }
+//                                String cameraURL = parser.getText(); // if next element is TEXT then element content is returned
+//                                camerasList.add( cameraURL );
+//                                Log.d("XMLPARSER","tipo" + cameraURL);
+//                            }
+//                        }
+//
+//                    break;
+//                }
+//                eventType = parser.next(); // Get next parsing event
+//            } // while()
+//        } catch (Exception e) {
+//            Log.d("XMLPARSER","Exception arises" + e);
+//          }
+//
+//    }
 
     private void JSONParser() throws JSONException, IOException {
 
         Log.d("JSONPARSER","init list");
         AssetManager assetManager = this.context.getAssets();
-        InputStream is = assetManager.open("200761-0-parques-jardines.json");
+        InputStream is = assetManager.open("JSON_buses_lineas.json");
         int size = is.available();
         byte[] buffer = new byte[size];
         is.read(buffer);
         is.close();
         String string_json = new String(buffer, "UTF-8");
-        JSONObject json_obj = new JSONObject(string_json);
-        JSONArray jsonArray = (JSONArray)json_obj.get("@graph");
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject position = (JSONObject) jsonArray.get(i);
-            GardensList.add(position.getString("title"));
+        try{
+            JSONObject json_obj = new JSONObject(string_json);
+            //JSONObject jsonlines = json_obj.getJSONObject("lineas");
+            //JSONObject jsonline44 = jsonlines.getJSONObject("44");
+            //String info44 = jsonline44.getString("descripcion");
+            //Log.d("JSON_APP",info44);
+        }catch (Exception e){
+            Log.d("JSON_APP","EXCEPCION " + e);
         }
+        //for (int i = 0; i < jsonlines.length(); i++) {
+            //JSONObject position = (JSONObject) jsonlines.getJSONObject("44");
+            //GardensList.add(position.getString("44"));
+        //}
 
     }
 

@@ -116,50 +116,50 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void gridLayout(View view) {
-        // Button to see in a grid fashion has been clicked:
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-    }
+//    public void gridLayout(View view) {
+//        // Button to see in a grid fashion has been clicked:
+//        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+//    }
 
-    public void seeCurrentSelection(View view) {
-        // Button "see current selection" has been clicked:
-
-        Iterator<Long> iteratorSelectedItemsKeys = tracker.getSelection().iterator();
-        // This iterator allows to navigate through the keys of the currently selected items.
-        // Complete info on getSelection():
-        // https://developer.android.com/reference/androidx/recyclerview/selection/SelectionTracker#getSelection()
-        // Complete info on class Selection (getSelection() returns an object of this class):
-        // https://developer.android.com/reference/androidx/recyclerview/selection/Selection
-
-        String text = "";
-        while (iteratorSelectedItemsKeys.hasNext()) {
-            text += iteratorSelectedItemsKeys.next().toString();
-            if (iteratorSelectedItemsKeys.hasNext()) {
-                text += ", ";
-            }
-        }
-        text = "Keys of currently selected items = \n" + text;
-        Intent i = new Intent(this, SecondActivity.class);
-        i.putExtra("text", text);
-        startActivity(i);
-    }
-
-    public void DeleteCurrentSelection(View view) {
-
-        //eliminar todos los botones seleccionados
-
-        Iterator<Long> iteratorSelectedItemsKeys = tracker.getSelection().iterator();
-
-        while (iteratorSelectedItemsKeys.hasNext()) {
-
-            //eliminacion del item
-            iteratorSelectedItemsKeys.next();
-            iteratorSelectedItemsKeys.remove();
-        }
-        //actualizar la lista
-        MyAdapter myAdapter = (MyAdapter) recyclerView.getAdapter();
-        myAdapter.notifyDataSetChanged();
-    }
+//    public void seeCurrentSelection(View view) {
+//        // Button "see current selection" has been clicked:
+//
+//        Iterator<Long> iteratorSelectedItemsKeys = tracker.getSelection().iterator();
+//        // This iterator allows to navigate through the keys of the currently selected items.
+//        // Complete info on getSelection():
+//        // https://developer.android.com/reference/androidx/recyclerview/selection/SelectionTracker#getSelection()
+//        // Complete info on class Selection (getSelection() returns an object of this class):
+//        // https://developer.android.com/reference/androidx/recyclerview/selection/Selection
+//
+//        String text = "";
+//        while (iteratorSelectedItemsKeys.hasNext()) {
+//            text += iteratorSelectedItemsKeys.next().toString();
+//            if (iteratorSelectedItemsKeys.hasNext()) {
+//                text += ", ";
+//            }
+//        }
+//        text = "Keys of currently selected items = \n" + text;
+//        Intent i = new Intent(this, SecondActivity.class);
+//        i.putExtra("text", text);
+//        startActivity(i);
+//    }
+//
+//    public void DeleteCurrentSelection(View view) {
+//
+//        //eliminar todos los botones seleccionados
+//
+//        Iterator<Long> iteratorSelectedItemsKeys = tracker.getSelection().iterator();
+//
+//        while (iteratorSelectedItemsKeys.hasNext()) {
+//
+//            //eliminacion del item
+//            iteratorSelectedItemsKeys.next();
+//            iteratorSelectedItemsKeys.remove();
+//        }
+//        //actualizar la lista
+//        MyAdapter myAdapter = (MyAdapter) recyclerView.getAdapter();
+//        myAdapter.notifyDataSetChanged();
+//    }
 
 
 
