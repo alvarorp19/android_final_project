@@ -21,11 +21,7 @@ import android.content.res.AssetManager;
 public class Dataset {
 
     // This dataset is a list of Items
-
-    private final static int TYPE_CAMARAS_LIST = 0;
-    private final static int TYPE_GARDENS_LIST = 1;
-
-    private final static String URL_JSON_LINEAS_BUSES = "https://vitesia.mytrama.com/emtusasiri/lineas/lineas";
+    private final static int TYPE_ALL_LINES_LIST = 1;
 
     private static final String TAG = "TAGListOfItems, Dataset";
     private List<Item> listofitems;
@@ -34,26 +30,23 @@ public class Dataset {
     private ArrayList<String> GardensList = new ArrayList<>();
     private Context context;
     private int type;
+    private String content;
 
-    Dataset(Context context,int typeList) {
+    Dataset(Context context, int typeList, String content) {
         Log.d(TAG, "Dataset() called");
         listofitems = new ArrayList<>();
         this.context = context;
         this.type = typeList;
+        this.content = content; //JSON string to be processed
 //        try {
 //            this.getStoredImages();
 //        } catch (IllegalAccessException e) {
 //            throw new RuntimeException(e);
 //        }
 
-        if(this.type == TYPE_CAMARAS_LIST){
-            //xmlParser();
-            for (int i = 0; i < camerasList.size(); ++i) {
-                listofitems.add(new Item(camerasList.get(i), camerasList.get(i) , (long) i));
-            }
-        }else if(this.type == TYPE_GARDENS_LIST){
+         if(this.type == MainActivity.TYPE_ALL_LINES_LIST){//show all lines
             try {
-                JSONParser();
+                JSONParseAllLines();
                 //for (int i = 0; i < GardensList.size(); ++i) {
                     //listofitems.add(new Item(GardensList.get(i), GardensList.get(i) , (long) i));
                 //}
@@ -148,11 +141,11 @@ public class Dataset {
 //
 //    }
 
-    private void JSONParser() throws JSONException, IOException {
+    private void JSONParseAllLines() throws JSONException, IOException {
 
         Log.d("JSONPARSER","init list");
         AssetManager assetManager = this.context.getAssets();
-        InputStream is = assetManager.open("JSON_buses_lineas.json");
+        InputStream is = assetManager.open("JSON_buses_lineas44.json");
         int size = is.available();
         byte[] buffer = new byte[size];
         is.read(buffer);
@@ -160,17 +153,17 @@ public class Dataset {
         String string_json = new String(buffer, "UTF-8");
         try{
             JSONObject json_obj = new JSONObject(string_json);
-            //JSONObject jsonlines = json_obj.getJSONObject("lineas");
-            //JSONObject jsonline44 = jsonlines.getJSONObject("44");
-            //String info44 = jsonline44.getString("descripcion");
-            //Log.d("JSON_APP",info44);
+            JSONObject jsonlines = json_obj.getJSONObject("lineas");
+            JSONObject jsonline44 = jsonlines.getJSONObject("44");
+            String info44 = jsonline44.getString("descripcion");
+            Log.d("JSON_APP",info44);
         }catch (Exception e){
             Log.d("JSON_APP","EXCEPCION " + e);
         }
-        //for (int i = 0; i < jsonlines.length(); i++) {
-            //JSONObject position = (JSONObject) jsonlines.getJSONObject("44");
-            //GardensList.add(position.getString("44"));
-        //}
+//        for (int i = 0; i < jsonline44.length(); i++) {
+//            JSONObject position = (JSONObject) jsonlines44.getJSONObject("44");
+//            GardensList.add(position.getString("44"));
+//        }
 
     }
 

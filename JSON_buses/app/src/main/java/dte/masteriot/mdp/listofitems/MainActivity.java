@@ -4,9 +4,10 @@
 
 package dte.masteriot.mdp.listofitems;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 
@@ -16,13 +17,11 @@ import androidx.recyclerview.selection.ItemKeyProvider;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.StorageStrategy;
 import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
-
-import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,8 +32,49 @@ public class MainActivity extends AppCompatActivity {
     private SelectionTracker<Long> tracker;
     private MyOnItemActivatedListener myOnItemActivatedListener;
 
-    private final static int TYPE_CAMARAS_LIST = 0;
-    private final static int TYPE_GARDENS_LIST = 1;
+    //type of content to be shown at running time
+    final static int TYPE_ALL_LINES_LIST = 0;
+
+    //URLs
+    final static String  URL_JSON_ALL_LINES_BUSES = "https://vitesia.mytrama.com/emtusasiri/lineas/lineas";
+
+    //MIME types
+    static final String CONTENT_TYPE_JSON = "application/json";
+
+    //constants for debugging puporses
+    final static String LOADWEBTAG = "LOADWEB";
+
+    //Handler Keys
+
+    final static String HANDLER_KEY_JSON_ALL_LINES = "jsonAllLines";
+
+    //Executor
+    ExecutorService es;
+
+    //JSON content to be processed
+
+    private String content = "";
+
+    // Define the handler that will receive the messages from the background thread that processes the HTML request:
+    Handler handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            // message received from background thread: load complete (or failure)
+            String string_result;
+            super.handleMessage(msg);
+            Log.d(LOADWEBTAG, "Message received from background thread");
+
+            Bundle data = msg.getData();  // Obtén el Bundle asociado al Message
+
+            //All lines
+            if (data.containsKey(HANDLER_KEY_JSON_ALL_LINES)) {
+                if ((string_result = msg.getData().getString(HANDLER_KEY_JSON_ALL_LINES)) != null) {
+                    content = string_result;
+                    Log.d(LOADWEBTAG, "Contenido web recibido en el hilo princial UI" + content);
+                }
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +85,9 @@ public class MainActivity extends AppCompatActivity {
             // Restore state related to selections previously made
             tracker.onRestoreInstanceState(savedInstanceState);
         }
+
+        //initializes the executor for background threads
+        es = Executors.newSingleThreadExecutor();
     }
 
     @Override
@@ -55,41 +98,44 @@ public class MainActivity extends AppCompatActivity {
 
     // ------ Buttons' on-click listeners ------ //
 
-    public void listLayout(View view) {
-        //mostrar contenido del XML
-
-        dataset = new Dataset(this,TYPE_CAMARAS_LIST);
-        myOnItemActivatedListener =
-                new MyOnItemActivatedListener(this, dataset);
-        // Prepare the RecyclerView:
-        recyclerView = findViewById(R.id.recyclerView);
-        MyAdapter recyclerViewAdapter = new MyAdapter(dataset,this);
-        recyclerView.setAdapter(recyclerViewAdapter);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        // Choose the layout manager to be set.
-        // some options for the layout manager:  GridLayoutManager, LinearLayoutManager, StaggeredGridLayoutManager
-        // by default, a linear layout is chosen:
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // Selection tracker (to allow for selection of items):
-        tracker = new SelectionTracker.Builder<>(
-                "my-selection-id",
-                recyclerView,
-                new MyItemKeyProvider(ItemKeyProvider.SCOPE_MAPPED, recyclerView),
-//                new StableIdKeyProvider(recyclerView), // This caused the app to crash on long clicks
-                new MyItemDetailsLookup(recyclerView),
-                StorageStrategy.createLongStorage())
-                .withOnItemActivatedListener(myOnItemActivatedListener)
-                .build();
-        recyclerViewAdapter.setSelectionTracker(tracker);
-
-    }
+//    public void listLayout(View view) {
+//        //mostrar contenido del XML
+//
+//        dataset = new Dataset(this,TYPE_CAMARAS_LIST);
+//        myOnItemActivatedListener =
+//                new MyOnItemActivatedListener(this, dataset);
+//        // Prepare the RecyclerView:
+//        recyclerView = findViewById(R.id.recyclerView);
+//        MyAdapter recyclerViewAdapter = new MyAdapter(dataset,this);
+//        recyclerView.setAdapter(recyclerViewAdapter);
+//        recyclerView.setItemAnimator(new DefaultItemAnimator());
+//
+//        // Choose the layout manager to be set.
+//        // some options for the layout manager:  GridLayoutManager, LinearLayoutManager, StaggeredGridLayoutManager
+//        // by default, a linear layout is chosen:
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        // Selection tracker (to allow for selection of items):
+//        tracker = new SelectionTracker.Builder<>(
+//                "my-selection-id",
+//                recyclerView,
+//                new MyItemKeyProvider(ItemKeyProvider.SCOPE_MAPPED, recyclerView),
+////                new StableIdKeyProvider(recyclerView), // This caused the app to crash on long clicks
+//                new MyItemDetailsLookup(recyclerView),
+//                StorageStrategy.createLongStorage())
+//                .withOnItemActivatedListener(myOnItemActivatedListener)
+//                .build();
+//        recyclerViewAdapter.setSelectionTracker(tracker);
+//
+//    }
 
 
     public void listLayout2(View view) {
-        //mostrar contenido del XML
 
-        dataset = new Dataset(this,TYPE_GARDENS_LIST);
+        String content = "";
+        //retrieves content
+        loadAllLines();
+        //Get information using a JSON
+        dataset = new Dataset(this,TYPE_ALL_LINES_LIST,content);
         myOnItemActivatedListener =
                 new MyOnItemActivatedListener(this, dataset);
         // Prepare the RecyclerView:
@@ -160,6 +206,14 @@ public class MainActivity extends AppCompatActivity {
 //        MyAdapter myAdapter = (MyAdapter) recyclerView.getAdapter();
 //        myAdapter.notifyDataSetChanged();
 //    }
+
+
+    private void loadAllLines() {
+
+        // Execute the loading task in background in order to get the JSON with all information lines:
+        LoadURLContents loadURLContents = new LoadURLContents(handler, CONTENT_TYPE_JSON, URL_JSON_ALL_LINES_BUSES);
+        es.execute(loadURLContents);
+    }
 
 
 
