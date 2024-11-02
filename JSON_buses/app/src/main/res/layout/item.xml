@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="125dp">
 
-            <LinearLayout android:id="@+id/list_offer_item_container"
+            <LinearLayout android:id="@+id/item_layout"
                 android:layout_below="@+id/lineNumber"
                 android:layout_width="125dp"
                 android:layout_height="wrap_content"

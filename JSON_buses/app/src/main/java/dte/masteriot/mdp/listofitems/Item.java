@@ -8,11 +8,13 @@ public class Item {
     private String title;
     private String subtitle;
     private Long key; // In this app we use keys of type Long
+    private Drawable refDrawable;
 
-    Item(String title, String subtitle, Long key) {
+    Item(String title, String subtitle, Long key, Drawable refDrawable) {
         this.title = title;
         this.subtitle = subtitle;
         this.key = key;
+        this.refDrawable = refDrawable;
     }
 
     public String getTitle() {
@@ -25,6 +27,10 @@ public class Item {
 
     public Long getKey() {
         return key;
+    }
+
+    public Drawable getDrawable() {
+        return refDrawable;
     }
 
     // We override the "equals" operator to only compare keys

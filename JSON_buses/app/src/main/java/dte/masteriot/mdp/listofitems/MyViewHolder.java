@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -26,6 +27,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
     // Holds references to individual item views
     TextView lineNumber;
     TextView subtitle;
+    LinearLayout elementLayout;
 
     private static final String TAG = "TAGListOfItems, MyViewHolder";
 
@@ -36,7 +38,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
 
         subtitle = itemView.findViewById(R.id.subtitle);
         lineNumber = itemView.findViewById(R.id.lineNumber);
-
+        elementLayout =  itemView.findViewById(R.id.item_layout);
         this.context = context;
     }
 
@@ -46,6 +48,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
 
         subtitle.setText(item.getSubtitle());
         lineNumber.setText(item.getTitle());
+        elementLayout.setBackground(item.getDrawable());
 
         if(isSelected) {
             //subtitle.setTextColor(Color.BLUE);

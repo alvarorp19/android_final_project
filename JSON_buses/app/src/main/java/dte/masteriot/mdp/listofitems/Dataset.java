@@ -1,5 +1,6 @@
 package dte.masteriot.mdp.listofitems;
 
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import java.io.IOException;
@@ -17,6 +18,8 @@ import java.io.InputStream;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import androidx.core.content.ContextCompat;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,14 +28,16 @@ public class Dataset {
 
     private List<Item> listofitems;
     private ArrayList<String> LinesDescriptionList = new ArrayList<>();
-    private Context context;
+    private static Context context;
     private int type;
     private String content;
 
     //Gijon lines information
     private static int NUMBER_OF_LINES = 26;
-
     private static String lines_numbers []  = {"1","2","4","6","10","12","14","15","16","18","20","21","24","25","26","28","30","31","34","35","36","41","42","43","44","71"};
+
+    //drawables references sorted by JSON lines order
+    private Drawable refDrawables [];
 
     Dataset(Context context, int typeList, String content) {
 
@@ -41,11 +46,44 @@ public class Dataset {
         this.type = typeList;
         this.content = content; //JSON string to be processed
 
+        //initializes drawables references
+        Drawable drawables_lines [] = {
+
+                    ContextCompat.getDrawable(context,R.drawable.line1_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line2_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line4_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line6_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line10_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line12_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line14_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line15_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line16_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line18_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line20_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line21_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line24_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line25_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line26_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line28_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line30_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line31_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line34_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line35_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line36_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line41_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line42_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line43_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line44_bus_icon),
+                    ContextCompat.getDrawable(context,R.drawable.line71_bus_icon)
+        };
+
+        this.refDrawables = drawables_lines;
+
          if(this.type == MainActivity.TYPE_ALL_LINES_LIST){//show all lines
             try {
                 JSONParseAllLines();
                 for (int i = 0; i < LinesDescriptionList.size(); ++i) {
-                    listofitems.add(new Item(lines_numbers[i], LinesDescriptionList.get(i) , (long) i));
+                    listofitems.add(new Item(lines_numbers[i], LinesDescriptionList.get(i) , (long) i, refDrawables[i]));
                 }
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -70,7 +108,8 @@ public class Dataset {
     public int getPositionOfKey(Long searchedkey) {
         // Look for the position of the Item with key = searchedkey.
         // The following works because in Item, the method "equals" is overriden to compare only keys:
-        int position = listofitems.indexOf(new Item("placeholder", "placeholder", searchedkey));
+        //int position = listofitems.indexOf(new Item("placeholder", "placeholder", searchedkey),1);
+        int position = 0;
         //Log.d(TAG, "getPositionOfKey() called for key " + searchedkey + ", returns " + position);
         return position;
     }
