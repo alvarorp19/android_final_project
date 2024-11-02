@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     //constants for debugging puporses
     final static String LOADWEBTAG = "LOADWEB";
+    final static String PARSINGJSONTAG = "PARSINGJSONTAG";
 
     //Handler Keys
 
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 if ((string_result = msg.getData().getString(HANDLER_KEY_JSON_ALL_LINES)) != null) {
                     content = string_result;
                     Log.d(LOADWEBTAG, "Contenido web recibido en el hilo princial UI" + content);
+                    generateListWithAllLines();
                 }
             }
         }
@@ -81,19 +83,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState != null) {
-            // Restore state related to selections previously made
-            tracker.onRestoreInstanceState(savedInstanceState);
-        }
+//        if (savedInstanceState != null) {
+//            // Restore state related to selections previously made
+//            tracker.onRestoreInstanceState(savedInstanceState);
+//        }
 
         //initializes the executor for background threads
         es = Executors.newSingleThreadExecutor();
+
+        //retrieves content from all Gijon buses lines
+        loadAllLines();
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        tracker.onSaveInstanceState(outState); // Save state about selections.
+        //tracker.onSaveInstanceState(outState); // Save state about selections.
     }
 
     // ------ Buttons' on-click listeners ------ //
@@ -127,40 +132,6 @@ public class MainActivity extends AppCompatActivity {
 //        recyclerViewAdapter.setSelectionTracker(tracker);
 //
 //    }
-
-
-    public void listLayout2(View view) {
-
-        String content = "";
-        //retrieves content
-        loadAllLines();
-        //Get information using a JSON
-        dataset = new Dataset(this,TYPE_ALL_LINES_LIST,content);
-        myOnItemActivatedListener =
-                new MyOnItemActivatedListener(this, dataset);
-        // Prepare the RecyclerView:
-        recyclerView = findViewById(R.id.recyclerView);
-        MyAdapter recyclerViewAdapter = new MyAdapter(dataset,this);
-        recyclerView.setAdapter(recyclerViewAdapter);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        // Choose the layout manager to be set.
-        // some options for the layout manager:  GridLayoutManager, LinearLayoutManager, StaggeredGridLayoutManager
-        // by default, a linear layout is chosen:
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // Selection tracker (to allow for selection of items):
-        tracker = new SelectionTracker.Builder<>(
-                "my-selection-id",
-                recyclerView,
-                new MyItemKeyProvider(ItemKeyProvider.SCOPE_MAPPED, recyclerView),
-//                new StableIdKeyProvider(recyclerView), // This caused the app to crash on long clicks
-                new MyItemDetailsLookup(recyclerView),
-                StorageStrategy.createLongStorage())
-                .withOnItemActivatedListener(myOnItemActivatedListener)
-                .build();
-        recyclerViewAdapter.setSelectionTracker(tracker);
-
-    }
 
 //    public void gridLayout(View view) {
 //        // Button to see in a grid fashion has been clicked:
@@ -215,6 +186,35 @@ public class MainActivity extends AppCompatActivity {
         es.execute(loadURLContents);
     }
 
+
+    private void generateListWithAllLines(){
+
+        //Get information using a JSON
+        dataset = new Dataset(this,TYPE_ALL_LINES_LIST,content);
+        myOnItemActivatedListener =
+                new MyOnItemActivatedListener(this, dataset);
+        // Prepare the RecyclerView:
+        recyclerView = findViewById(R.id.recyclerView);
+        MyAdapter recyclerViewAdapter = new MyAdapter(dataset,this);
+        recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        // Choose the layout manager to be set.
+        // some options for the layout manager:  GridLayoutManager, LinearLayoutManager, StaggeredGridLayoutManager
+        // by default, a linear layout is chosen:
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // Selection tracker (to allow for selection of items):
+        tracker = new SelectionTracker.Builder<>(
+                "my-selection-id",
+                recyclerView,
+                new MyItemKeyProvider(ItemKeyProvider.SCOPE_MAPPED, recyclerView),
+//                new StableIdKeyProvider(recyclerView), // This caused the app to crash on long clicks
+                new MyItemDetailsLookup(recyclerView),
+                StorageStrategy.createLongStorage())
+                .withOnItemActivatedListener(myOnItemActivatedListener)
+                .build();
+        recyclerViewAdapter.setSelectionTracker(tracker);
+    }
 
 
 

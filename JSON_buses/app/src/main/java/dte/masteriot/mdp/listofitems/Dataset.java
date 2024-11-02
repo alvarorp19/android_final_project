@@ -17,39 +17,36 @@ import java.io.InputStream;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class Dataset {
 
-    // This dataset is a list of Items
-    private final static int TYPE_ALL_LINES_LIST = 1;
-
-    private static final String TAG = "TAGListOfItems, Dataset";
     private List<Item> listofitems;
-    private final int ITEM_COUNT = 8;
-    private ArrayList<String> camerasList = new ArrayList<>();
-    private ArrayList<String> GardensList = new ArrayList<>();
+    private ArrayList<String> LinesDescriptionList = new ArrayList<>();
     private Context context;
     private int type;
     private String content;
 
+    //Gijon lines information
+    private static int NUMBER_OF_LINES = 26;
+
+    private static String lines_numbers []  = {"1","2","4","6","10","12","14","15","16","18","20","21","24","25","26","28","30","31","34","35","36","41","42","43","44","71"};
+
     Dataset(Context context, int typeList, String content) {
-        Log.d(TAG, "Dataset() called");
+
         listofitems = new ArrayList<>();
         this.context = context;
         this.type = typeList;
         this.content = content; //JSON string to be processed
-//        try {
-//            this.getStoredImages();
-//        } catch (IllegalAccessException e) {
-//            throw new RuntimeException(e);
-//        }
 
          if(this.type == MainActivity.TYPE_ALL_LINES_LIST){//show all lines
             try {
                 JSONParseAllLines();
-                //for (int i = 0; i < GardensList.size(); ++i) {
-                    //listofitems.add(new Item(GardensList.get(i), GardensList.get(i) , (long) i));
-                //}
+                for (int i = 0; i < LinesDescriptionList.size(); ++i) {
+                    listofitems.add(new Item(LinesDescriptionList.get(i), LinesDescriptionList.get(i) , (long) i));
+                }
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             } catch (IOException e) {
@@ -102,68 +99,57 @@ public class Dataset {
 //
 //    }
 
-//    private void xmlParser(){
-//
-//        XmlPullParserFactory parserFactory;
-//        try {
-//            Log.d("XMLPARSER","init list");
-//            parserFactory = XmlPullParserFactory.newInstance();
-//            XmlPullParser parser = parserFactory.newPullParser();
-//            AssetManager assetManager = this.context.getAssets();
-//            InputStream is = assetManager.open("CCTV.kml");
-//            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-//            parser.setInput(is, null);
-//            int eventType = parser.getEventType(); // current event state of the parser
-//            while (eventType != XmlPullParser.END_DOCUMENT) {
-//                String elementName = null;
-//                elementName = parser.getName(); // name of the current element
-//                switch (eventType) {
-//                    case XmlPullParser.START_TAG:
-//                        if ("Data".equals(elementName)) {
-//                            String dataElement = parser.getAttributeValue(null,"name");
-//                            if (("Nombre".equals(dataElement))){
-//                                for (int i = 0; i<3;  i++){
-//                                    parser.next();//avanzamos hasta el contenido de cada param
-//                                }
-//                                String cameraURL = parser.getText(); // if next element is TEXT then element content is returned
-//                                camerasList.add( cameraURL );
-//                                Log.d("XMLPARSER","tipo" + cameraURL);
-//                            }
-//                        }
-//
-//                    break;
-//                }
-//                eventType = parser.next(); // Get next parsing event
-//            } // while()
-//        } catch (Exception e) {
-//            Log.d("XMLPARSER","Exception arises" + e);
-//          }
-//
-//    }
-
     private void JSONParseAllLines() throws JSONException, IOException {
 
-        Log.d("JSONPARSER","init list");
-        AssetManager assetManager = this.context.getAssets();
-        InputStream is = assetManager.open("JSON_buses_lineas44.json");
-        int size = is.available();
-        byte[] buffer = new byte[size];
-        is.read(buffer);
-        is.close();
-        String string_json = new String(buffer, "UTF-8");
+        Log.d(MainActivity.PARSINGJSONTAG,"init parsing");
+        String string_json = content;
+        String special_char = "�";
+        String cleanDescription = "";
+        Map<String, String[]> strange_characters = Map.ofEntries(
+                Map.entry("1", new String[]{"Ñ"}),
+                Map.entry("2", new String[]{"Ñ"}),
+                Map.entry("10", new String[]{"Í", "Ñ"}),
+                Map.entry("14", new String[]{"Ñ", "Ó"}),
+                Map.entry("15", new String[]{"Ñ"}),
+                Map.entry("16", new String[]{"Ó"}),
+                Map.entry("18", new String[]{"Ó", "Ñ"}),
+                Map.entry("20", new String[]{"Ó"}),
+                Map.entry("25", new String[]{"Ñ", "Ó"}),
+                Map.entry("26", new String[]{"Ó"}),
+                Map.entry("28", new String[]{"Ó"}),
+                Map.entry("35", new String[]{"Ñ"}),
+                Map.entry("71", new String[]{"Á","Ñ"})
+        );
+
         try{
             JSONObject json_obj = new JSONObject(string_json);
             JSONObject jsonlines = json_obj.getJSONObject("lineas");
-            JSONObject jsonline44 = jsonlines.getJSONObject("44");
-            String info44 = jsonline44.getString("descripcion");
-            Log.d("JSON_APP",info44);
+            Log.d(MainActivity.PARSINGJSONTAG,"Processing the JSON containing all lines");
+
+            for (int i = 0; i < NUMBER_OF_LINES; i++) {
+                JSONObject line = jsonlines.getJSONObject(lines_numbers[i]);
+                String lineDescription = line.getString("descripcion");
+
+                //cleaning special char
+                if (lineDescription.contains(special_char)){
+                    String ElementsToReplace [] = strange_characters.get(lines_numbers[i]);
+                    Log.d(MainActivity.PARSINGJSONTAG,"Elementos que se van a añadir: " + ElementsToReplace.length);
+                    for(int j = 0; j < ElementsToReplace.length; j++){
+                        Log.d(MainActivity.PARSINGJSONTAG,"CAMBIANDO " + special_char + " -> " + ElementsToReplace[j]);
+                        cleanDescription= lineDescription.replaceFirst(special_char,ElementsToReplace[j]);
+                        lineDescription = cleanDescription;
+                        Log.d(MainActivity.PARSINGJSONTAG,"Descripcion cambidada "+ cleanDescription);
+                    }
+                }
+
+                String lineDescriptionCleanedAndTrim = lineDescription.trim();
+                LinesDescriptionList.add("Linea " + lines_numbers[i] + ": " + lineDescriptionCleanedAndTrim);
+                Log.d(MainActivity.PARSINGJSONTAG,"New element (number of element = " + i + ") (line = " + lines_numbers[i] + ") appended to dataset: " + lineDescriptionCleanedAndTrim);
+            }
+
         }catch (Exception e){
-            Log.d("JSON_APP","EXCEPCION " + e);
+            Log.d(MainActivity.PARSINGJSONTAG,"EXCEPCION " + e);
         }
-//        for (int i = 0; i < jsonline44.length(); i++) {
-//            JSONObject position = (JSONObject) jsonlines44.getJSONObject("44");
-//            GardensList.add(position.getString("44"));
-//        }
 
     }
 

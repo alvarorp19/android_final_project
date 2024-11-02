@@ -2,5 +2,31 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="blue">#3366FF</color>
+    <color name="red">#FF1744</color>
+    <color name="color_line1">#00A6D6</color>
+    <color name="color_line2">#5C145E</color>
+    <color name="color_line4">#144D29</color>
+    <color name="color_line6">#DE1F82</color>
+    <color name="color_line10">#2905A1</color>
+    <color name="color_line12">#F7D917</color>
+    <color name="color_line14">#8FD400</color>
+    <color name="color_line15">#FF9B03</color>
+    <color name="color_line16">#4F2926</color>
+    <color name="color_line18">#F58FC7</color>
+    <color name="color_line20">#910045</color>
+    <color name="color_line21">#00B052</color>
+    <color name="color_line24">#7D7805</color>
+    <color name="color_line25">#9E4D0A</color>
+    <color name="color_line26">#C4A6DE</color>
+    <color name="color_line28">#F00A00</color>
+    <color name="color_line30">#B80B00</color>
+    <color name="color_line31">#FF80FF</color>
+    <color name="color_line34">#828585</color>
+    <color name="color_line35">#FF8040</color>
+    <color name="color_line36">#408080</color>
+    <color name="color_line41">#004236</color>
+    <color name="color_line42">#5C145E</color>
+    <color name="color_line43">#404040</color>
+    <color name="color_line44">#002856</color>
+    <color name="color_line71">#0080FF</color>
 </resources>
