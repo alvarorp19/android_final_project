@@ -45,7 +45,7 @@ public class Dataset {
             try {
                 JSONParseAllLines();
                 for (int i = 0; i < LinesDescriptionList.size(); ++i) {
-                    listofitems.add(new Item(LinesDescriptionList.get(i), LinesDescriptionList.get(i) , (long) i));
+                    listofitems.add(new Item(lines_numbers[i], LinesDescriptionList.get(i) , (long) i));
                 }
             } catch (JSONException e) {
                 throw new RuntimeException(e);
@@ -143,7 +143,7 @@ public class Dataset {
                 }
 
                 String lineDescriptionCleanedAndTrim = lineDescription.trim();
-                LinesDescriptionList.add("Linea " + lines_numbers[i] + ": " + lineDescriptionCleanedAndTrim);
+                LinesDescriptionList.add(lineDescriptionCleanedAndTrim);
                 Log.d(MainActivity.PARSINGJSONTAG,"New element (number of element = " + i + ") (line = " + lines_numbers[i] + ") appended to dataset: " + lineDescriptionCleanedAndTrim);
             }
 

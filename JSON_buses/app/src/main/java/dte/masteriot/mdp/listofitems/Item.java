@@ -1,14 +1,13 @@
 package dte.masteriot.mdp.listofitems;
 
+import android.graphics.drawable.Drawable;
+
 public class Item {
     // This class contains the actual data of each item of the dataset
 
     private String title;
     private String subtitle;
-    private String imageDescription;
     private Long key; // In this app we use keys of type Long
-    private String image;
-    private String url;
 
     Item(String title, String subtitle, Long key) {
         this.title = title;

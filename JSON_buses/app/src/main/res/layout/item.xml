@@ -10,12 +10,37 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="125dp"
         android:layout_margin="5dp"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <TextView
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="125dp">
+
+            <LinearLayout android:id="@+id/list_offer_item_container"
+                android:layout_below="@+id/lineNumber"
+                android:layout_width="125dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/line1_bus_icon">
+
+
+                <TextView
+                    android:id="@+id/lineNumber"
+                    style="@style/Base.TextAppearance.AppCompat.Subhead"
+                    android:layout_width="125dp"
+                    android:layout_height="match_parent"
+                    android:textStyle="bold"
+                    android:textSize="25sp"
+                    android:gravity="center"
+                    android:layout_below="@+id/ImageBusLine"
+                    android:text="Line 1"
+                    android:textColor="@color/white"/>
+
+            </LinearLayout>
+            <TextView
             android:id="@+id/subtitle"
             style="@style/Base.TextAppearance.AppCompat.Subhead"
             android:layout_width="match_parent"
@@ -24,6 +49,8 @@
             android:textSize="25sp"
             android:gravity="center"
             android:text="Placeholder for subtitle" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
