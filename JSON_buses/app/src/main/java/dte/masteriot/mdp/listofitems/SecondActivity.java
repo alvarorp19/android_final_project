@@ -32,8 +32,9 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
     private String url_line = "https://vitesia.mytrama.com/emtusasiri/lineas/lineas/"; //info about all line stops
     private String url_line_trajectory = "https://vitesia.mytrama.com/emtusasiri/trayectos/trayectos/";
 
-    private ArrayList<Integer> IdtrayectosLine = new ArrayList<>(); //here we are going to store all idtrayectos field forn a specific line
+    private ArrayList<String> IdtrayectosLine = new ArrayList<>(); //here we are going to store all idtrayectos field forn a specific line (first index = outbound, second = return)
     private String content = ""; //web content
+    private Boolean contentHasBeenRetrieved = false;
 
     static final String CONTENT_TYPE_JSON = "application/json";
 
@@ -55,7 +56,7 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
                 if ((string_result = msg.getData().getString(HANDLER_KEY_JSON)) != null) {
                     content = string_result;
                     Log.d(LOADWEB_SECOND_ACTIVITY_TAG, "Contenido web recibido en el hilo secundario UI" + content);
-
+                    contentHasBeenRetrieved = true;
                     JSONParseALine(content,IdtrayectosLine);
 
                 }
@@ -83,6 +84,13 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
             @Override
             public void onClick(View v) {
                 Log.d(SECOND_ACTIVITY_TAG, "OUTBOUND button pressed");
+
+                if (contentHasBeenRetrieved){
+                    //ToDo: show trajectory information
+                }else{
+                    //ToDo: print information on screen to inform that the information isn't downloaded yet
+                }
+                //Log.d(SECOND_ACTIVITY_TAG,);
             }
         });
 
@@ -90,6 +98,12 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
             @Override
             public void onClick(View v) {
                 Log.d(SECOND_ACTIVITY_TAG, "RETURN button pressed");
+
+                if (contentHasBeenRetrieved){
+                    //ToDo: show trajectory information
+                }else{
+                    //ToDo: print information on screen to inform that the information isn't downloaded yet
+                }
             }
         });
 

@@ -76,7 +76,7 @@ public interface JSONParsing {
     }
 
 
-    default void JSONParseALine(String content, ArrayList<Integer> IdtrayectosLine){
+    default void JSONParseALine(String content, ArrayList<String> IdtrayectosLine){
 
         //this method is being used to get all the "Idtrayectos" field on a specific bus line
         Log.d(MainActivity.PARSINGJSONTAG,"Parsing a specific line");
@@ -94,7 +94,7 @@ public interface JSONParsing {
                 JSONObject trayectory = (JSONObject) trayectosArray.get(i);
                 idTrayecto = trayectory.getString("idtrayecto");
                 Log.d(MainActivity.PARSINGJSONTAG,"ID de trayeto recuperado: " + idTrayecto);
-                //IdtrayectosLine.add();
+                IdtrayectosLine.add(idTrayecto);
             }
 
         }catch(Exception e){
