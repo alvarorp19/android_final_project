@@ -76,6 +76,7 @@ public class LoadURLContents implements Runnable {
                         BufferedReader in2 = new BufferedReader(reader2);
                         // We read the text contents line by line and add them to a StringBuilder:
                         String line2 = in2.readLine();
+
                         while (line2 != null) {
                             textBuilder.append(line2).append("\n");
                             line2 = in2.readLine();
@@ -84,7 +85,7 @@ public class LoadURLContents implements Runnable {
 
                         Log.d(MainActivity.LOADWEBTAG, threadAndClass + ": load complete, sending message to UI thread");
                         if ("".equals(response) == false) {
-                            msg_data.putString(MainActivity.HANDLER_KEY_JSON_ALL_LINES, response);
+                            msg_data.putString(MainActivity.HANDLER_KEY_JSON, response);
                         }
 
                         break;

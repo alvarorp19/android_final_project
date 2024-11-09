@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Handler Keys
 
-    final static String HANDLER_KEY_JSON_ALL_LINES = "jsonAllLines";
+    final static String HANDLER_KEY_JSON = "jsonInfo";
 
     //Executor
     ExecutorService es;
@@ -69,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
             Bundle data = msg.getData();  // Obtén el Bundle asociado al Message
 
             //All lines
-            if (data.containsKey(HANDLER_KEY_JSON_ALL_LINES)) {
-                if ((string_result = msg.getData().getString(HANDLER_KEY_JSON_ALL_LINES)) != null) {
+            if (data.containsKey(HANDLER_KEY_JSON)) {
+                if ((string_result = msg.getData().getString(HANDLER_KEY_JSON)) != null) {
                     content = string_result;
                     Log.d(LOADWEBTAG, "Contenido web recibido en el hilo princial UI" + content);
                     generateListWithAllLines();

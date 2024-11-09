@@ -2,6 +2,7 @@ package dte.masteriot.mdp.listofitems;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,6 +20,8 @@ public interface JSONParsing {
      //methods
 
     default void JSONParseAllLines(String content, ArrayList<String> LinesDescriptionList) throws JSONException, IOException {
+
+        //this method is being used to get the name of each line
 
         Log.d(MainActivity.PARSINGJSONTAG,"init parsing");
         String string_json = content;
@@ -70,5 +73,34 @@ public interface JSONParsing {
             Log.d(MainActivity.PARSINGJSONTAG,"EXCEPCION " + e);
         }
 
+    }
+
+
+    default void JSONParseALine(String content, ArrayList<Integer> IdtrayectosLine){
+
+        //this method is being used to get all the "Idtrayectos" field on a specific bus line
+        Log.d(MainActivity.PARSINGJSONTAG,"Parsing a specific line");
+        String string_json = content;
+        String idTrayecto = "";
+
+        try{
+
+            JSONArray json_array = new JSONArray(string_json);
+            JSONObject wholeJson=  json_array.getJSONObject(0);
+            JSONArray trayectosArray = wholeJson.getJSONArray("trayectos");
+
+            for (int i = 0; i < trayectosArray.length(); i++) {
+                //getting idtrayectos field
+                JSONObject trayectory = (JSONObject) trayectosArray.get(i);
+                idTrayecto = trayectory.getString("idtrayecto");
+                Log.d(MainActivity.PARSINGJSONTAG,"ID de trayeto recuperado: " + idTrayecto);
+                //IdtrayectosLine.add();
+            }
+
+        }catch(Exception e){
+
+            Log.d(MainActivity.PARSINGJSONTAG,"EXCEPCION " + e);
+
+        }
     }
 }
