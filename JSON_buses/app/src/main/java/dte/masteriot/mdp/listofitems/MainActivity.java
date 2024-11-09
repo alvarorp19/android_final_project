@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     //constants for debugging puporses
     final static String LOADWEBTAG = "LOADWEB";
     final static String PARSINGJSONTAG = "PARSINGJSONTAG";
+    final static String SHORTCLICKTAG = "SHORTCLICKTAG";
 
     //Handler Keys
 
@@ -103,35 +104,6 @@ public class MainActivity extends AppCompatActivity {
 
     // ------ Buttons' on-click listeners ------ //
 
-//    public void listLayout(View view) {
-//        //mostrar contenido del XML
-//
-//        dataset = new Dataset(this,TYPE_CAMARAS_LIST);
-//        myOnItemActivatedListener =
-//                new MyOnItemActivatedListener(this, dataset);
-//        // Prepare the RecyclerView:
-//        recyclerView = findViewById(R.id.recyclerView);
-//        MyAdapter recyclerViewAdapter = new MyAdapter(dataset,this);
-//        recyclerView.setAdapter(recyclerViewAdapter);
-//        recyclerView.setItemAnimator(new DefaultItemAnimator());
-//
-//        // Choose the layout manager to be set.
-//        // some options for the layout manager:  GridLayoutManager, LinearLayoutManager, StaggeredGridLayoutManager
-//        // by default, a linear layout is chosen:
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        // Selection tracker (to allow for selection of items):
-//        tracker = new SelectionTracker.Builder<>(
-//                "my-selection-id",
-//                recyclerView,
-//                new MyItemKeyProvider(ItemKeyProvider.SCOPE_MAPPED, recyclerView),
-////                new StableIdKeyProvider(recyclerView), // This caused the app to crash on long clicks
-//                new MyItemDetailsLookup(recyclerView),
-//                StorageStrategy.createLongStorage())
-//                .withOnItemActivatedListener(myOnItemActivatedListener)
-//                .build();
-//        recyclerViewAdapter.setSelectionTracker(tracker);
-//
-//    }
 
 //    public void gridLayout(View view) {
 //        // Button to see in a grid fashion has been clicked:

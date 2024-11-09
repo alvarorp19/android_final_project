@@ -19,7 +19,7 @@ public class SecondActivity extends AppCompatActivity {
 
         // Get the text to be shown from the calling intent and set it in the layout
         Intent inputIntent = getIntent();
-        String inputText = inputIntent.getStringExtra("text");
+        String inputText = inputIntent.getStringExtra(MyOnItemActivatedListener.EXTRA_INFO_TO_SECOND_ACTIVITY);
         tv.setText(inputText);
     }
 }

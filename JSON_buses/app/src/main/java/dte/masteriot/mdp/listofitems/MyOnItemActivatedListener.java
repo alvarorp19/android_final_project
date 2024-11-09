@@ -1,5 +1,7 @@
 package dte.masteriot.mdp.listofitems;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -18,27 +20,16 @@ public class MyOnItemActivatedListener implements OnItemActivatedListener<Long> 
     // is activated (tapped or double clicked)."
     // [https://developer.android.com/reference/androidx/recyclerview/selection/OnItemActivatedListener]
 
-    //defines for uris
-
-    private static final String ARDILLA = "https://es.wikipedia.org/wiki/Ardilla";
-    private static final String CERDA = "https://es.wikipedia.org/wiki/Sus_scrofa_domestica";
-    private static final String COLIBRI = "https://es.wikipedia.org/wiki/Colibri";
-    private static final String CONEJO = "https://es.wikipedia.org/wiki/Oryctolagus_cuniculus";
-    private static final String ERIZO = "https://es.wikipedia.org/wiki/Erinaceinae";
-    private static final String MAPACHE = "https://es.wikipedia.org/wiki/Procyon";
-    private static final String PANDA = "https://es.wikipedia.org/wiki/Ailuropoda_melanoleuca";
-    private static final String TUCAN = "https://es.wikipedia.org/wiki/Ramphastidae";
-
-    private static final String TAG = "TAGListOfItems, MyOnItemActivatedListener";
-
     private final Context context;
     private Dataset dataset; // reference to the dataset, so that the activated item's data can be accessed if necessary
+    private String lines_numbers []; // this string will contain the bus lines shorted as is being represented on the main recicler view
 
-    String [] Uris = {ARDILLA,CERDA,COLIBRI,CONEJO,ERIZO,MAPACHE,PANDA,TUCAN};
+    public static final String EXTRA_INFO_TO_SECOND_ACTIVITY = "EXTRA_INFO_2";
 
     public MyOnItemActivatedListener(Context context, Dataset ds) {
         this.context = context;
         this.dataset = ds;
+        this.lines_numbers = dataset.getLinesShorted();
     }
 
     // ------ Implementation of methods ------ //
@@ -55,11 +46,12 @@ public class MyOnItemActivatedListener implements OnItemActivatedListener<Long> 
 //        Log.d(TAG, "Clicked item with position = " + itemdetails.getPosition()
 //                + " and key = " + itemdetails.getSelectionKey());
 
-//        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Uris[itemdetails.getPosition()]));
-//        context.startActivity(intent);
-////        i.putExtra("text", "Clicked item with position = " + itemdetails.getPosition()
-////                + " and key = " + itemdetails.getSelectionKey());
-//        context.startActivity(intent);
+//         i.putExtra("text", "Clicked item with position = " + itemdetails.getPosition()
+//                + " and key = " + itemdetails.getSelectionKey());
+        Intent intent = new Intent(context, SecondActivity.class);
+        intent.putExtra(EXTRA_INFO_TO_SECOND_ACTIVITY,this.lines_numbers[itemdetails.getPosition()]);
+        context.startActivity(intent);
+        Log.d(MainActivity.SHORTCLICKTAG,"Pulsacion corta sobre la linea " + this.lines_numbers[itemdetails.getPosition()]);
         return true;
     }
 }

@@ -138,6 +138,11 @@ public class Dataset {
 //
 //    }
 
+    public String [] getLinesShorted(){
+
+        return lines_numbers;
+    }
+
     private void JSONParseAllLines() throws JSONException, IOException {
 
         Log.d(MainActivity.PARSINGJSONTAG,"init parsing");
