@@ -11,6 +11,9 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class ThirdActivity extends AppCompatActivity implements JSONParsing{
 
     private String url_line_trajectory = "https://vitesia.mytrama.com/emtusasiri/trayectos/trayectos/";
@@ -25,8 +28,12 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing{
 
     private static final String HANDLER_KEY_JSON = "jsonInfo";
 
+    private static final String CONTENT_TYPE_JSON = "application/json";
+
     private String content;
     private Boolean TrayectorycontentHasBeenRetrieved = false;
+
+    private ExecutorService es;
 
     // Define the handler that will receive the messages from the background thread that processes the HTML request:
     Handler handler = new Handler(Looper.getMainLooper()) {
@@ -64,14 +71,22 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing{
 
         Log.d(THIRD_ACTIVITY_TAG,"LINE: " + lineSelected + "Trajectory: " + trajectorySelected);
 
+        //mounting URL
+        url_line_trajectory = url_line_trajectory + "/" + lineSelected + "/" + trajectorySelected;
+
+        //initializes the executor for background threads
+        es = Executors.newSingleThreadExecutor();
+
+        //requesting content from created URL through HTTP
+        loadSpecifictrayectory();
+
     }
 
 
-    private void loadSpecifictrayectory(String trayectoryNumber){
+    private void loadSpecifictrayectory(){
 
         // Execute the loading task in background in order to get the JSON with a specific information lines:
-        url_line_trajectory = url_line_trajectory + lineSelected + "/" + trayectoryNumber;
-        //LoadURLContents loadURLContents = new LoadURLContents(handler, CONTENT_TYPE_JSON, url_line_trajectory, HANDLER_KEY_JSON2);
-        //es.execute(loadURLContents);
+        LoadURLContents loadURLContents = new LoadURLContents(handler, CONTENT_TYPE_JSON, url_line_trajectory);
+        es.execute(loadURLContents);
     }
 }
