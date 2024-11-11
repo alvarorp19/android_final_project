@@ -103,4 +103,7 @@ public interface JSONParsing {
 
         }
     }
+
+
+    //ToDo: default void JSONParseATrajectory(String content,)
 }

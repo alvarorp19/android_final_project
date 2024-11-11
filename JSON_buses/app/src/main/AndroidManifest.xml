@@ -16,6 +16,10 @@
         android:theme="@style/Theme.ListOfItems"
         tools:targetApi="31">
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBgewrNYhF6mFneV3rgsIoXBJrwA6n-_E4" />
+
         <activity
             android:name=".SecondActivity"
             android:screenOrientation="portrait"

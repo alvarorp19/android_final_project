@@ -38,6 +38,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
