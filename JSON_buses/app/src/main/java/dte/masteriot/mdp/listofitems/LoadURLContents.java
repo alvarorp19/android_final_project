@@ -29,7 +29,6 @@ public class LoadURLContents implements Runnable {
         this.creator = handler;
         this.expectedContent_type = cnt_type;
         this.strURL = strURL;
-
     }
 
     @SuppressLint("LongLogTag")

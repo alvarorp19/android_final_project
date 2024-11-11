@@ -30,13 +30,16 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
     private Button outboundButton;
 
     private String url_line = "https://vitesia.mytrama.com/emtusasiri/lineas/lineas/"; //info about all line stops
-    private String url_line_trajectory = "https://vitesia.mytrama.com/emtusasiri/trayectos/trayectos/";
+    private String lineSelected = "0";
 
     private ArrayList<String> IdtrayectosLine = new ArrayList<>(); //here we are going to store all idtrayectos field forn a specific line (first index = outbound, second = return)
     private String content = ""; //web content
-    private Boolean contentHasBeenRetrieved = false;
+    private Boolean linecontentHasBeenRetrieved = false;
 
     static final String CONTENT_TYPE_JSON = "application/json";
+
+    public static final String EXTRA_INFO_TO_THIRD_ACTIVITY_LINE = "EXTRA_INFO_3_LINE";
+    public static final String EXTRA_INFO_TO_THIRD_ACTIVITY_TRAJECTORY = "EXTRA_INFO_3_TRAJECTORY";
 
     private ExecutorService es;
 
@@ -56,7 +59,7 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
                 if ((string_result = msg.getData().getString(HANDLER_KEY_JSON)) != null) {
                     content = string_result;
                     Log.d(LOADWEB_SECOND_ACTIVITY_TAG, "Contenido web recibido en el hilo secundario UI" + content);
-                    contentHasBeenRetrieved = true;
+                    linecontentHasBeenRetrieved = true;
                     JSONParseALine(content,IdtrayectosLine);
 
                 }
@@ -71,7 +74,7 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
 
         // Get the text to be shown from the calling intent and set it in the layout
         Intent inputIntent = getIntent();
-        String lineSelected = inputIntent.getStringExtra(MyOnItemActivatedListener.EXTRA_INFO_TO_SECOND_ACTIVITY);
+        lineSelected = inputIntent.getStringExtra(MyOnItemActivatedListener.EXTRA_INFO_TO_SECOND_ACTIVITY);
 
         //filling line URL
         url_line = url_line + lineSelected;
@@ -85,8 +88,8 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
             public void onClick(View v) {
                 Log.d(SECOND_ACTIVITY_TAG, "OUTBOUND button pressed");
 
-                if (contentHasBeenRetrieved){
-                    //ToDo: show trajectory information
+                if (linecontentHasBeenRetrieved){
+                    launchThirdActivity(IdtrayectosLine.get(0)); //first position equals to outbound route
                 }else{
                     //ToDo: print information on screen to inform that the information isn't downloaded yet
                 }
@@ -99,8 +102,8 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
             public void onClick(View v) {
                 Log.d(SECOND_ACTIVITY_TAG, "RETURN button pressed");
 
-                if (contentHasBeenRetrieved){
-                    //ToDo: show trajectory information
+                if (linecontentHasBeenRetrieved){
+                    launchThirdActivity(IdtrayectosLine.get(1)); //second position equals to return route
                 }else{
                     //ToDo: print information on screen to inform that the information isn't downloaded yet
                 }
@@ -119,9 +122,20 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
 
     private void loadSpecificLine() {
 
-        // Execute the loading task in background in order to get the JSON with all information lines:
+        // Execute the loading task in background in order to get the JSON with a specific information lines:
         LoadURLContents loadURLContents = new LoadURLContents(handler, CONTENT_TYPE_JSON, url_line);
         es.execute(loadURLContents);
+    }
+
+
+    private void launchThirdActivity(String trajectoryNumber){
+
+        //launching 3º activity
+        Intent intent = new Intent(this, ThirdActivity.class);
+        intent.putExtra(EXTRA_INFO_TO_THIRD_ACTIVITY_LINE,lineSelected);
+        intent.putExtra(EXTRA_INFO_TO_THIRD_ACTIVITY_TRAJECTORY,trajectoryNumber);
+        Log.d(SECOND_ACTIVITY_TAG,"Launching 3º activity");
+        startActivity(intent);
     }
 
 }
