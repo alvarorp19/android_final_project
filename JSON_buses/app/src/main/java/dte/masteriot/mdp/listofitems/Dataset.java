@@ -28,6 +28,7 @@ public class Dataset implements JSONParsing{
 
     private List<Item> listofitems;
     private ArrayList<String> LinesDescriptionList = new ArrayList<>();
+    Map<Integer, String []> TrayectoryMap = new HashMap<>();
     private static Context context;
     private int type;
     private String content;
@@ -80,6 +81,18 @@ public class Dataset implements JSONParsing{
                 JSONParseAllLines(this.content, this.LinesDescriptionList);
                 for (int i = 0; i < LinesDescriptionList.size(); ++i) {
                     listofitems.add(new Item(lines_numbers[i], LinesDescriptionList.get(i) , (long) i, refDrawables[i]));
+                }
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }else if (this.type == ThirdActivity.TYPE_SPECIFIC_TRAJECTORY_LIST){
+            try {
+                JSONParseATrajectory(this.content, this.TrayectoryMap);
+                for (Integer i = 0; i < TrayectoryMap.size(); ++i) {
+                    String parada [] = TrayectoryMap.get(i);
+                    listofitems.add(new Item(parada[1], parada[0] , (long) i, ContextCompat.getDrawable(context,R.drawable.line1_bus_icon)));
                 }
             } catch (JSONException e) {
                 throw new RuntimeException(e);

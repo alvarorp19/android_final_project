@@ -10,6 +10,12 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.selection.ItemKeyProvider;
+import androidx.recyclerview.selection.SelectionTracker;
+import androidx.recyclerview.selection.StorageStrategy;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,6 +41,14 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing{
 
     private ExecutorService es;
 
+    private Dataset dataset2;
+
+    static final int TYPE_SPECIFIC_TRAJECTORY_LIST = 1;
+
+    private RecyclerView recyclerView;
+    private SelectionTracker<Long> tracker;
+    private MyOnItemActivatedListener myOnItemActivatedListener;
+
     // Define the handler that will receive the messages from the background thread that processes the HTML request:
     Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -52,7 +66,8 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing{
                     content = string_result;
                     Log.d(LOADWEB_THIRD_ACTIVITY_TAG, "Contenido web recibido en el hilo secundario UI" + content);
                     TrayectorycontentHasBeenRetrieved = true;
-                    //JSONParseALine(content,IdtrayectosLine);
+                    //initializes reciclerView with trayectory info
+                    generateListWithTrajectoryInfo();
 
                 }
             }
@@ -88,5 +103,36 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing{
         // Execute the loading task in background in order to get the JSON with a specific information lines:
         LoadURLContents loadURLContents = new LoadURLContents(handler, CONTENT_TYPE_JSON, url_line_trajectory);
         es.execute(loadURLContents);
+    }
+
+
+
+    private void generateListWithTrajectoryInfo(){
+
+        //Get information using a JSON
+        dataset2 = new Dataset(this,TYPE_SPECIFIC_TRAJECTORY_LIST,content);
+        myOnItemActivatedListener =
+                new MyOnItemActivatedListener(this, dataset2);
+        // Prepare the RecyclerView:
+        recyclerView = findViewById(R.id.recyclerView2);
+        MyAdapter recyclerViewAdapter = new MyAdapter(dataset2,this);
+        recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        // Choose the layout manager to be set.
+        // some options for the layout manager:  GridLayoutManager, LinearLayoutManager, StaggeredGridLayoutManager
+        // by default, a linear layout is chosen:
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // Selection tracker (to allow for selection of items):
+        tracker = new SelectionTracker.Builder<>(
+                "my-selection-id",
+                recyclerView,
+                new MyItemKeyProvider(ItemKeyProvider.SCOPE_MAPPED, recyclerView),
+//                new StableIdKeyProvider(recyclerView), // This caused the app to crash on long clicks
+                new MyItemDetailsLookup(recyclerView),
+                StorageStrategy.createLongStorage())
+                .withOnItemActivatedListener(myOnItemActivatedListener)
+                .build();
+        recyclerViewAdapter.setSelectionTracker(tracker);
     }
 }

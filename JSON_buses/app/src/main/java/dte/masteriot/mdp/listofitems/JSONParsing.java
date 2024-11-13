@@ -105,5 +105,40 @@ public interface JSONParsing {
     }
 
 
-    //ToDo: default void JSONParseATrajectory(String content,)
+    default void JSONParseATrajectory(String content, Map<Integer, String []> TrayectoryDescriptionList) throws JSONException, IOException{
+
+        Log.d(MainActivity.PARSINGJSONTAG,"Parsing a specific trajectory");
+        String string_json = content;
+        String descriptionParada = "";
+        String idParada = "";
+        String [] infoParada;
+
+        try{
+
+            JSONObject wholeJson = new JSONObject(string_json);
+            JSONArray ParadasArray = wholeJson.getJSONArray("paradas");
+            Log.d(MainActivity.PARSINGJSONTAG,ParadasArray.toString());
+
+            for (Integer i = 0; i < ParadasArray.length(); i++) {
+
+                infoParada = new String[ParadasArray.length()];
+                
+                //getting idtrayectos field
+                JSONObject parada = (JSONObject) ParadasArray.get(i);
+                descriptionParada = parada.getString("descripcion");
+                idParada = parada.getString("idParada");
+                Log.d(MainActivity.PARSINGJSONTAG,"Descripcion de parada recuperado: " + descriptionParada);
+
+                infoParada[0] = descriptionParada;
+                infoParada[1] = idParada;
+                TrayectoryDescriptionList.put(i,infoParada);
+            }
+
+        }catch(Exception e){
+
+            Log.d(MainActivity.PARSINGJSONTAG,"EXCEPCION " + e);
+
+        }
+
+    }
 }
