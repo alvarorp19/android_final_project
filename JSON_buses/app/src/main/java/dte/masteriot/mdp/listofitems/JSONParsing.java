@@ -18,7 +18,7 @@ public interface JSONParsing {
 
      String lines_numbers []  = {"1","2","4","6","10","12","14","15","16","18","20","21","24","25","26","28","30","31","34","35","36","41","42","43","44","71"};
 
-     static final int INFO_TO_RECEIVE_TRAJECTORY_QUERY = 8;
+     static final int INFO_TO_RECEIVE_TRAJECTORY_QUERY = 9;
 
      //methods
 
@@ -121,6 +121,7 @@ public interface JSONParsing {
         String idAutobus = "0";
         String minutesToArrive = "";
         String distanceToArrive = "";
+        String lineNumber = "";
 
 
         try{
@@ -136,6 +137,8 @@ public interface JSONParsing {
 
                 //processing JSON
                 JSONObject parada = (JSONObject) ParadasArray.get(i);
+                idParada = parada.getString("idParada");
+
                 JSONArray arrayWithStopInfo = parada.getJSONArray("listaLlegadas");
                 JSONObject jsonStopInfo = arrayWithStopInfo.getJSONObject(0);
 
@@ -147,10 +150,11 @@ public interface JSONParsing {
                 idAutobus = jsonStopInfo.getString("idautobus");
                 minutesToArrive = jsonStopInfo.getString("minutos");
                 distanceToArrive = jsonStopInfo.getString("distancia");
+                lineNumber = jsonStopInfo.getString("idlinea");
 
                 Log.d(MainActivity.PARSINGJSONTAG,"Info parada " + descriptionParada + ": " + longitud + " "
                         + latidud + " " + autobusEnParada + " " + idAutobus + " " + minutesToArrive + " "
-                        + distanceToArrive);
+                        + distanceToArrive + " " + lineNumber);
 
                 infoParada[0] = descriptionParada;
                 infoParada[1] = idParada;
@@ -160,6 +164,7 @@ public interface JSONParsing {
                 infoParada[5] = idAutobus;
                 infoParada[6] = minutesToArrive;
                 infoParada[7] = distanceToArrive;
+                infoParada[8] = lineNumber;
 
                 TrayectoryDescriptionList.put(i,infoParada);
             }
@@ -170,5 +175,18 @@ public interface JSONParsing {
 
         }
 
+    }
+
+    default int getLinePositionInJson(String IDline){
+
+        int arrayPosition = 0;
+
+        for (int i = 0; i < lines_numbers.length; i++) {
+            if (lines_numbers[i].equals(IDline)) {
+                arrayPosition = i;
+                break;
+            }
+        }
+        return arrayPosition;
     }
 }

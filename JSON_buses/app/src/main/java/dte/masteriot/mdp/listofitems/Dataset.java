@@ -92,7 +92,7 @@ public class Dataset implements JSONParsing{
                 JSONParseATrajectory(this.content, this.TrayectoryMap);
                 for (Integer i = 0; i < TrayectoryMap.size(); ++i) {
                     String parada [] = TrayectoryMap.get(i);
-                    listofitems.add(new Item(parada[1], parada[0] , (long) i, ContextCompat.getDrawable(context,R.drawable.line1_bus_icon)));
+                    listofitems.add(new Item(parada[1], parada[0] , (long) i, drawables_lines[getLinePositionInJson(parada[8])]));
                 }
             } catch (JSONException e) {
                 throw new RuntimeException(e);
