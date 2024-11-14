@@ -17,6 +17,9 @@ public interface JSONParsing {
      int NUMBER_OF_LINES = 26;
 
      String lines_numbers []  = {"1","2","4","6","10","12","14","15","16","18","20","21","24","25","26","28","30","31","34","35","36","41","42","43","44","71"};
+
+     static final int INFO_TO_RECEIVE_TRAJECTORY_QUERY = 8;
+
      //methods
 
     default void JSONParseAllLines(String content, ArrayList<String> LinesDescriptionList) throws JSONException, IOException {
@@ -112,6 +115,13 @@ public interface JSONParsing {
         String descriptionParada = "";
         String idParada = "";
         String [] infoParada;
+        String longitud = "";
+        String latidud = "";
+        String autobusEnParada = "0";
+        String idAutobus = "0";
+        String minutesToArrive = "";
+        String distanceToArrive = "";
+
 
         try{
 
@@ -121,16 +131,36 @@ public interface JSONParsing {
 
             for (Integer i = 0; i < ParadasArray.length(); i++) {
 
-                infoParada = new String[ParadasArray.length()];
-                
-                //getting idtrayectos field
+                infoParada = new String[INFO_TO_RECEIVE_TRAJECTORY_QUERY];
+
+
+                //processing JSON
                 JSONObject parada = (JSONObject) ParadasArray.get(i);
+                JSONArray arrayWithStopInfo = parada.getJSONArray("listaLlegadas");
+                JSONObject jsonStopInfo = arrayWithStopInfo.getJSONObject(0);
+
+                //Getting fiels
                 descriptionParada = parada.getString("descripcion");
-                idParada = parada.getString("idParada");
-                Log.d(MainActivity.PARSINGJSONTAG,"Descripcion de parada recuperado: " + descriptionParada);
+                longitud = parada.getString("longitud");
+                latidud = parada.getString("latitud");
+                autobusEnParada = parada.getString("autobusEnParada");
+                idAutobus = jsonStopInfo.getString("idautobus");
+                minutesToArrive = jsonStopInfo.getString("minutos");
+                distanceToArrive = jsonStopInfo.getString("distancia");
+
+                Log.d(MainActivity.PARSINGJSONTAG,"Info parada " + descriptionParada + ": " + longitud + " "
+                        + latidud + " " + autobusEnParada + " " + idAutobus + " " + minutesToArrive + " "
+                        + distanceToArrive);
 
                 infoParada[0] = descriptionParada;
                 infoParada[1] = idParada;
+                infoParada[2] = longitud;
+                infoParada[3] = latidud;
+                infoParada[4] = autobusEnParada;
+                infoParada[5] = idAutobus;
+                infoParada[6] = minutesToArrive;
+                infoParada[7] = distanceToArrive;
+
                 TrayectoryDescriptionList.put(i,infoParada);
             }
 
