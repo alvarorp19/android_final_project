@@ -94,7 +94,6 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing{
 
         //requesting content from created URL through HTTP
         loadSpecifictrayectory();
-
     }
 
 
