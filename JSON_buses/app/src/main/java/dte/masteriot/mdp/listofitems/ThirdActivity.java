@@ -115,7 +115,7 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing{
                 new MyOnItemActivatedListener(this, dataset2);
         // Prepare the RecyclerView:
         recyclerView = findViewById(R.id.recyclerView2);
-        MyAdapter recyclerViewAdapter = new MyAdapter(dataset2,this);
+        MyAdapter recyclerViewAdapter = new MyAdapter(dataset2,this,MyAdapter.ID_CALLER_THIRD_ACTIVITY);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 

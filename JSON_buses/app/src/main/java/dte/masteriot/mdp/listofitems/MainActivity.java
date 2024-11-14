@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
                 new MyOnItemActivatedListener(this, dataset);
         // Prepare the RecyclerView:
         recyclerView = findViewById(R.id.recyclerView);
-        MyAdapter recyclerViewAdapter = new MyAdapter(dataset,this);
+        MyAdapter recyclerViewAdapter = new MyAdapter(dataset,this,MyAdapter.ID_CALLER_MAIN_ACTIVITY);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
