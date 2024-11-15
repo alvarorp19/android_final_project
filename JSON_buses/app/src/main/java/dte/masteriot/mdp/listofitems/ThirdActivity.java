@@ -1,5 +1,6 @@
 package dte.masteriot.mdp.listofitems;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,10 +18,40 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ThirdActivity extends AppCompatActivity implements JSONParsing{
+import dte.masteriot.mdp.listofitems.databinding.ActivityThirdBinding;
+
+import com.google.android.gms.location.CurrentLocationRequest;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+//import com.example.google_maps_views.databinding.ActivityMapsBinding;
+import com.google.android.gms.tasks.CancellationTokenSource;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import  com.google.android.gms.tasks.Task.*;
+
+public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnMapReadyCallback{
 
     private String url_line_trajectory = "https://vitesia.mytrama.com/emtusasiri/trayectos/trayectos/";
     private String lineSelected = "0";
@@ -49,6 +80,11 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing{
     private SelectionTracker<Long> tracker;
     private MyOnItemActivatedListener myOnItemActivatedListener;
 
+    private ActivityThirdBinding binding;
+
+    private GoogleMap mMap;
+    Map<Integer, LatLng> markersMap = new HashMap<>();
+
     // Define the handler that will receive the messages from the background thread that processes the HTML request:
     Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -69,6 +105,12 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing{
                     //initializes reciclerView with trayectory info
                     generateListWithTrajectoryInfo();
 
+                    //getting maps info
+                    getMarkersFromSelectedTrayectory();
+
+                    //setting markers on maps
+                    putMarkersOnMaps();
+
                 }
             }
         }
@@ -77,7 +119,14 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_third);
+        //setContentView(R.layout.activity_third);
+
+        binding = ActivityThirdBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         // Get the trajectory selected
         Intent inputIntent = getIntent();
@@ -134,4 +183,52 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing{
                 .build();
         recyclerViewAdapter.setSelectionTracker(tracker);
     }
+
+
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Sydney, Australia.
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
+     */
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+
+        //nothing to do here now. We can't the marker here beacuse we don't have the current location yet.
+
+        // Add a marker in the current location (mobile location)
+        Log.d(THIRD_ACTIVITY_TAG,"google maps initialized");
+        //LatLng gijon = new LatLng(43.5242951508631, -5.60997539735195);
+        //mMap.addMarker(new MarkerOptions().position(gijon).title("Test location"));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(gijon));
+
+    }
+
+
+    private void getMarkersFromSelectedTrayectory(){
+
+        for (Integer i =0; i < dataset2.getTrayectoryMap().size();i++){
+            String parada [] = dataset2.getTrayectoryMap().get(i);
+
+            LatLng mapPosition = new LatLng(Double.parseDouble(parada[3]),Double.parseDouble(parada[2]));
+            this.markersMap.put(i,mapPosition);
+            Log.d("TERCERAACTIVIDAD",Double.parseDouble(parada[3]) + " " + Double.parseDouble(parada[2]));
+        }
+
+    }
+
+
+    private void putMarkersOnMaps(){
+
+        for (Integer i = 0; i < this.markersMap.size();i++){
+            mMap.addMarker(new MarkerOptions().position(this.markersMap.get(i)));
+        }
+    }
 }
+

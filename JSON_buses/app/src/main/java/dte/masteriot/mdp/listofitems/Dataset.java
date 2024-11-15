@@ -152,4 +152,10 @@ public class Dataset implements JSONParsing{
         return lines_numbers;
     }
 
+
+    public Map<Integer, String []> getTrayectoryMap(){
+
+        return this.TrayectoryMap;
+    }
+
 }

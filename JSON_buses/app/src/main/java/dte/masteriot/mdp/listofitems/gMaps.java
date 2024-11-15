@@ -61,6 +61,11 @@ public class gMaps implements OnMapReadyCallback {
 
         this.context = context;
         this.markersMap = markers;
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
     }
 
 //    @SuppressLint("MissingPermission")
