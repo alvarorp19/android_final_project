@@ -1,36 +1,39 @@
 package dte.masteriot.mdp.mdp_mqttclient;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
-
-import androidx.activity.EdgeToEdge;
+import android.widget.TextView;  // Import TextView
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import com.hivemq.client.mqtt.mqtt3.Mqtt3AsyncClient;
 import com.hivemq.client.mqtt.MqttClient;
+import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends AppCompatActivity {
 
     String TAG = "TAG_MDPMQTT";
-    String serverHost = "192.168.56.1";
+    String serverHost = "192.168.1.130";  // Replace with your Mosquitto broker's IP if different
     int serverPort = 1883;
-    String subscriptionTopic = "ubuntu/#";
-    String publishingTopic = "android/topic";
+
+    // Topics
+    String newsTopic = "GIJONBOARD/NEWS";
+    String stopRequestTopic = "GIJONBOARD/idlinea/idtrayecto";
+
+    // MQTT Client
     Mqtt3AsyncClient client;
+    Handler handler = new Handler();
+    Runnable publishRunnable;
+
+    // Declare the TextView
+    TextView newsTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        // Initialize the TextView
+        newsTextView = findViewById(R.id.newsTextView);
 
         createMQTTclient();
         connectToBroker();
@@ -39,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        stopPeriodicPublishing();
         disconnectFromBroker();
     }
 
@@ -49,28 +52,21 @@ public class MainActivity extends AppCompatActivity {
                 .identifier("my-mqtt-client-id")
                 .serverHost(serverHost)
                 .serverPort(serverPort)
-                //.useSslWithDefaultConfig()
                 .buildAsync();
     }
 
     void connectToBroker() {
-        if(client != null) {
+        if (client != null) {
             client.connectWith()
-                    //.simpleAuth()
-                    //.username("")
-                    //.password("".getBytes())
-                    //.applySimpleAuth()
                     .send()
                     .whenComplete((connAck, throwable) -> {
                         if (throwable != null) {
-                            // handle failure
                             Log.d(TAG, "Problem connecting to server:");
                             Log.d(TAG, throwable.toString());
                         } else {
-                            // connected -> setup subscribes and publish a message
                             Log.d(TAG, "Connected to server");
-                            subscribeToTopic();
-                            publishMessage();
+                            subscribeToNewsTopic();
+                            startPeriodicPublishing(); // Start periodic publishing
                         }
                     });
         } else {
@@ -78,54 +74,65 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void subscribeToTopic() {
+    void subscribeToNewsTopic() {
         client.subscribeWith()
-                .topicFilter(subscriptionTopic)
+                .topicFilter(newsTopic)
                 .callback(publish -> {
-                    String receivedMessage = new String(publish.getPayloadAsBytes());
-                    Log.d(TAG, "Message received: " + receivedMessage);
+                    String message = new String(publish.getPayloadAsBytes(), StandardCharsets.UTF_8);
+                    Log.d(TAG, "News Message Received: " + message);
 
-                    // If the message is from the broker
-                    if (receivedMessage.equals("hello from the broker")) {
-                        Log.d(TAG, "Broker sent a reply: " + receivedMessage);
-                    }
+                    // Update the TextView on the main thread
+                    runOnUiThread(() -> newsTextView.setText(message));
                 })
                 .send()
                 .whenComplete((subAck, throwable) -> {
                     if (throwable != null) {
-                        // Handle failure to subscribe
-                        Log.d(TAG, "Problem subscribing to topic:");
+                        Log.d(TAG, "Problem subscribing to news topic:");
                         Log.d(TAG, throwable.toString());
                     } else {
-                        // Handle successful subscription
-                        Log.d(TAG, "Subscribed to topic");
+                        Log.d(TAG, "Subscribed to news topic");
                     }
                 });
     }
 
-    void publishMessage() {
+    void publishStopRequest() {
+        String message = "Stop request from Android";
         client.publishWith()
-                .topic(publishingTopic)
-                .payload("hello from android".getBytes())  // Modified message
+                .topic(stopRequestTopic)
+                .payload(message.getBytes(StandardCharsets.UTF_8))
                 .send()
                 .whenComplete((publish, throwable) -> {
                     if (throwable != null) {
-                        // handle failure to publish
-                        Log.d(TAG, "Problem publishing on topic:");
+                        Log.d(TAG, "Problem publishing stop request:");
                         Log.d(TAG, throwable.toString());
                     } else {
-                        // handle successful publish
-                        Log.d(TAG, "Message published");
+                        Log.d(TAG, "Stop request published");
                     }
                 });
+    }
+
+    void startPeriodicPublishing() {
+        publishRunnable = new Runnable() {
+            @Override
+            public void run() {
+                publishStopRequest();
+                handler.postDelayed(this, 5000); // Re-run every 5 seconds
+            }
+        };
+        handler.post(publishRunnable); // Start the first publish
+    }
+
+    void stopPeriodicPublishing() {
+        if (publishRunnable != null) {
+            handler.removeCallbacks(publishRunnable);
+        }
     }
 
     void disconnectFromBroker() {
         if (client != null) {
             client.disconnect()
-                    .whenComplete ((result, throwable) -> {
+                    .whenComplete((result, throwable) -> {
                         if (throwable != null) {
-                            // handle failure
                             Log.d(TAG, "Problem disconnecting from server:");
                             Log.d(TAG, throwable.toString());
                         } else {
