@@ -227,7 +227,9 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
     private void putMarkersOnMaps(){
 
         for (Integer i = 0; i < this.markersMap.size();i++){
-            mMap.addMarker(new MarkerOptions().position(this.markersMap.get(i)));
+
+            String parada [] = dataset2.getTrayectoryMap().get(i);
+            mMap.addMarker(new MarkerOptions().position(this.markersMap.get(i)).title(parada[0] + " (No: "+ parada[1] + ")" + ", " + parada[6] + " minutes left"));
         }
     }
 }
