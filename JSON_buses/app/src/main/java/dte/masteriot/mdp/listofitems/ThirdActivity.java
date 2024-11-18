@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -110,6 +109,10 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
                     //setting markers on maps
                     putMarkersOnMaps();
+
+                    //running MQTT service
+
+                    runMQTTservice();
 
                 }
             }
@@ -231,6 +234,15 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
             String parada [] = dataset2.getTrayectoryMap().get(i);
             mMap.addMarker(new MarkerOptions().position(this.markersMap.get(i)).title(parada[0] + " (No: "+ parada[1] + ")" + ", " + parada[6] + " minutes left"));
         }
+    }
+
+
+    private void runMQTTservice(){
+
+        //running MQTT services in a background thread
+
+        es.execute(new Mqtt());
+
     }
 }
 

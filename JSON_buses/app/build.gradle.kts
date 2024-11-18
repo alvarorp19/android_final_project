@@ -33,6 +33,14 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+
+    packaging {
+        resources.excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+        resources.excludes.add("META-INF/INDEX.LIST")
+        resources.excludes.add("META-INF/io.netty.versions.properties")
+    }
+    
 }
 
 dependencies {
@@ -49,4 +57,5 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation ("androidx.fragment:fragment:1.3.6")
+    implementation("com.hivemq:hivemq-mqtt-client:1.3.3")
 }
