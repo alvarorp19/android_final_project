@@ -1,6 +1,8 @@
 package dte.masteriot.mdp.listofitems;
 
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.widget.TextView;  // Import TextView
 import com.hivemq.client.mqtt.mqtt3.Mqtt3AsyncClient;
@@ -9,6 +11,8 @@ import java.nio.charset.StandardCharsets;
 
 
 public class Mqtt implements Runnable{
+
+    public final static String CONNECTED = "1";
 
     private String TAG = "TAG_MDPMQTT";
     String serverHost = "broker.hivemq.com";  // Replace with your Mosquitto broker's IP if different
@@ -25,6 +29,24 @@ public class Mqtt implements Runnable{
 
     // Declare the TextView
     TextView newsTextView;
+
+    //thread info
+
+    private Handler creator; //here we store the handler object created by the UI thread
+    private Message msg;
+    private Bundle msg_data;
+
+    public enum connectionStatus {
+        DISCONNECTED, CONNECTED
+    }
+
+    connectionStatus status = connectionStatus.DISCONNECTED;
+
+    Mqtt(Handler handler){
+
+        this.creator = handler;
+    }
+
 
     void createMQTTclient() {
         client = MqttClient.builder()
@@ -45,8 +67,15 @@ public class Mqtt implements Runnable{
                     Log.d(TAG, throwable.toString());
                 } else {
                     Log.d(TAG, "Connected to server");
+
+                    //changing the client status
+                    status = connectionStatus.CONNECTED;
+
+                    //Notifying UI thread that MQTT client has been connected successfully
+                    msg_data.putString(ThirdActivity.HANDLER_KEY_MQTT,CONNECTED);
+                    msg.sendToTarget();
+
                     subscribeToNewsTopic();
-                    startPeriodicPublishing(); // Start periodic publishing
                 }
             });
         } else {
@@ -89,16 +118,16 @@ public class Mqtt implements Runnable{
                 });
     }
 
-    void startPeriodicPublishing() {
-        publishRunnable = new Runnable() {
-            @Override
-            public void run() {
-                publishStopRequest();
-                handler.postDelayed(this, 5000); // Re-run every 5 seconds
-            }
-        };
-        handler.post(publishRunnable); // Start the first publish
-    }
+//    void startPeriodicPublishing() {
+//        publishRunnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                publishStopRequest();
+//                handler.postDelayed(this, 5000); // Re-run every 5 seconds
+//            }
+//        };
+//        handler.post(publishRunnable); // Start the first publish
+//    }
 
     void stopPeriodicPublishing() {
         if (publishRunnable != null) {
@@ -128,10 +157,25 @@ public class Mqtt implements Runnable{
 
         //thread routine where MQTT service will be running
         Log.d(TAG,"Executing MQTT thread");
-        createMQTTclient();
-        //here we are subscribing to news topic and for this moment we are publishing info in one
-        //topic in order to check MQQT functionalities 
-        connectToBroker();
+
+        if(status == connectionStatus.DISCONNECTED){
+
+            msg = creator.obtainMessage();
+            msg_data = msg.getData();
+
+            //creating MQTT client
+            createMQTTclient();
+            //here we are subscribing to news topic and for this moment we are publishing info in one
+            //topic in order to check MQQT functionalities
+            connectToBroker();
+
+        }else if(status == connectionStatus.CONNECTED){
+
+            //when the program reach this point means that the button has been pressed
+            //so we publish on the topic
+            publishStopRequest();
+
+        }
 
     }
 }

@@ -37,7 +37,7 @@
                 android:layout_height="75dp"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/stop_button"
-                android:text="STOP"
+                android:text="Waiting MQTT..."
                 android:textStyle="bold" />
 
         </RelativeLayout>

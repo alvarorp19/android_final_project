@@ -8,6 +8,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -65,6 +68,7 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
     public static final String EXTRA_INFO_TO_THIRD_ACTIVITY_TRAJECTORY = "EXTRA_INFO_3_TRAJECTORY";
 
     private static final String HANDLER_KEY_JSON = "jsonInfo";
+    public static final String HANDLER_KEY_MQTT = "MQTTinfo";
 
     private static final String CONTENT_TYPE_JSON = "application/json";
 
@@ -85,6 +89,8 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
     private GoogleMap mMap;
     Map<Integer, LatLng> markersMap = new HashMap<>();
+
+    private Button stopButton;
 
     // Define the handler that will receive the messages from the background thread that processes the HTML request:
     Handler handler = new Handler(Looper.getMainLooper()) {
@@ -125,6 +131,47 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
         }
     };
 
+
+
+    Handler handler2 = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+
+            Bundle data = msg.getData();  // Obtén el Bundle asociado al Message
+
+            //All lines
+            if(data.containsKey(HANDLER_KEY_MQTT)){
+
+                Log.d(THIRD_ACTIVITY_TAG,"MQTT message received!");
+
+                if ((msg.getData().getString(HANDLER_KEY_MQTT)).equals(Mqtt.CONNECTED)) {
+
+                    Log.d(THIRD_ACTIVITY_TAG,"callback for request button has been enabled");
+
+                    stopButton.setText("STOP REQUEST");
+
+                    stopButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+
+                            //publishing on MQTT topic
+
+                            Log.d(THIRD_ACTIVITY_TAG,"Stop requested");
+
+                            runMQTTservice();
+                        }
+                    });
+
+
+                }
+            }
+        }
+    };
+
+    Mqtt myMqtt = new Mqtt(handler2);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,6 +190,8 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
         trajectorySelected = inputIntent.getStringExtra(EXTRA_INFO_TO_THIRD_ACTIVITY_TRAJECTORY);
 
         Log.d(THIRD_ACTIVITY_TAG,"LINE: " + lineSelected + "Trajectory: " + trajectorySelected);
+
+        stopButton = findViewById(R.id.stopButton);
 
         //mounting URL
         url_line_trajectory = url_line_trajectory + "/" + lineSelected + "/" + trajectorySelected;
@@ -263,8 +312,7 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
     private void runMQTTservice(){
 
         //running MQTT services in a background thread
-
-        es.execute(new Mqtt());
+        es.execute(myMqtt);
 
     }
 }

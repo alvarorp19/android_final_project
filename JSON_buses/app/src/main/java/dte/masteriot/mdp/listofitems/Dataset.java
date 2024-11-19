@@ -156,6 +156,6 @@ public class Dataset implements JSONParsing{
 
         return this.TrayectoryMap;
     }
-    
+
 
 }
