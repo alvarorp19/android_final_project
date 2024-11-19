@@ -2,6 +2,7 @@ package dte.masteriot.mdp.listofitems;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -45,6 +46,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 //import com.example.google_maps_views.databinding.ActivityMapsBinding;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.CancellationTokenSource;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -109,6 +111,10 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
                     //setting markers on maps
                     putMarkersOnMaps();
+
+                    //setting trayectory on maps
+
+                    joinMarkersOnMaps();
 
                     //running MQTT service
 
@@ -234,6 +240,23 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
             String parada [] = dataset2.getTrayectoryMap().get(i);
             mMap.addMarker(new MarkerOptions().position(this.markersMap.get(i)).title(parada[0] + " (No: "+ parada[1] + ")" + ", " + parada[6] + " minutes left"));
         }
+    }
+
+
+    private void joinMarkersOnMaps(){
+
+        for (int i = 0; i < (this.markersMap.size() - 1); i++){
+
+            //here we need to join two points
+
+            mMap.addPolyline(new PolylineOptions()
+                            .add(markersMap.get(i),markersMap.get(i + 1))//points to join
+                            .width(10f)//line width
+                            .color(Color.RED));
+
+
+        }
+
     }
 
 

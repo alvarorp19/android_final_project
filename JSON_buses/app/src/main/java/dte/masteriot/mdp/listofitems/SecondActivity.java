@@ -11,6 +11,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -91,7 +92,9 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
                 if (linecontentHasBeenRetrieved){
                     launchThirdActivity(IdtrayectosLine.get(0)); //first position equals to outbound route
                 }else{
-                    //ToDo: print information on screen to inform that the information isn't downloaded yet
+
+                    Toast.makeText(SecondActivity.this, "Information from stops couldn't be retreived yet", Toast.LENGTH_SHORT).show();
+
                 }
                 //Log.d(SECOND_ACTIVITY_TAG,);
             }
@@ -105,7 +108,8 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
                 if (linecontentHasBeenRetrieved){
                     launchThirdActivity(IdtrayectosLine.get(1)); //second position equals to return route
                 }else{
-                    //ToDo: print information on screen to inform that the information isn't downloaded yet
+
+                    Toast.makeText(SecondActivity.this, "Information from stops couldn't be retreived yet", Toast.LENGTH_SHORT).show();
                 }
             }
         });

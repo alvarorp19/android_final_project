@@ -42,7 +42,6 @@ public class Dataset implements JSONParsing{
         this.context = context;
         this.type = typeList;
         this.content = content; //JSON string to be processed
-
         //initializes drawables references
         Drawable drawables_lines [] = {
 
@@ -157,5 +156,6 @@ public class Dataset implements JSONParsing{
 
         return this.TrayectoryMap;
     }
+    
 
 }
