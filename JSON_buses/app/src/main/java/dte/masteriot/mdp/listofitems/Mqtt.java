@@ -19,7 +19,7 @@ public class Mqtt implements Runnable{
     int serverPort = 1883;
 
     // Topics
-    String newsTopic = "GIJONBOARD/NEWS";
+    String newsTopic = "gijonboard/news";
     String stopRequestTopic = "stop/1/1";
 
     // MQTT Client

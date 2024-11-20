@@ -26,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
@@ -158,9 +159,13 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
                             //publishing on MQTT topic
 
-                            Log.d(THIRD_ACTIVITY_TAG,"Stop requested");
+                            Log.d(THIRD_ACTIVITY_TAG,"Stop requested button clicked");
 
                             runMQTTservice();
+
+                            //notifying user that neeeds to shake the phone in order to stop the bus
+
+                            Toast.makeText(ThirdActivity.this, "SHAKE THE PHONE TO STOP THE BUS!!", Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -262,9 +267,15 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
         // Add a marker in the current location (mobile location)
         Log.d(THIRD_ACTIVITY_TAG,"google maps initialized");
-        //LatLng gijon = new LatLng(43.5242951508631, -5.60997539735195);
-        //mMap.addMarker(new MarkerOptions().position(gijon).title("Test location"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(gijon));
+
+        //Gijon bound
+        LatLngBounds gijonBounds = new LatLngBounds(
+                new LatLng(43.501074, -5.706608), // Suroeste
+                new LatLng(43.563619, -5.604365)  // Noreste
+        );
+
+        //moving maps camera
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(gijonBounds, 100));
 
     }
 
