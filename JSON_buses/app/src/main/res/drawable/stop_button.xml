@@ -4,13 +4,13 @@
         <shape xmlns:android="http://schemas.android.com/apk/res/android"
             android:shape="rectangle">
 
-            <solid android:color="@color/color_request_stop" /> <!-- Color amarillo -->
+            <solid android:color="@color/color_request_stop" />
 
 
-            <stroke android:width="6dp" /> <!-- Color negro -->
+            <stroke android:width="6dp" />
 
 
-            <corners android:radius="0dp" /> <!-- Sin redondeo -->
-         </shape>
+            <corners android:radius="5dp" />
+        </shape>
     </item>
 </selector>

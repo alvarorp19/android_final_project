@@ -11,9 +11,11 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
     private String url_line = "https://vitesia.mytrama.com/emtusasiri/lineas/lineas/"; //info about all line stops
     private String lineSelected = "0";
 
-    private ArrayList<String> IdtrayectosLine = new ArrayList<>(); //here we are going to store all idtrayectos field forn a specific line (first index = outbound, second = return)
+    private ArrayList<String> IdtrayectosLine = new ArrayList<>(); //here we are going to store all idtrayectos field for a specific line (first index = outbound, second = return)
     private String content = ""; //web content
     private Boolean linecontentHasBeenRetrieved = false;
 
@@ -43,6 +45,8 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
     public static final String EXTRA_INFO_TO_THIRD_ACTIVITY_TRAJECTORY = "EXTRA_INFO_3_TRAJECTORY";
 
     private ExecutorService es;
+
+    private TextView bannerText;
 
     // Define the handler that will receive the messages from the background thread that processes the HTML request:
     Handler handler = new Handler(Looper.getMainLooper()) {
@@ -76,6 +80,11 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
         // Get the text to be shown from the calling intent and set it in the layout
         Intent inputIntent = getIntent();
         lineSelected = inputIntent.getStringExtra(MyOnItemActivatedListener.EXTRA_INFO_TO_SECOND_ACTIVITY);
+
+        //modifying text on banner
+        bannerText = findViewById(R.id.banner2);
+        String newBannerText = bannerText.getText() + " " + lineSelected;
+        bannerText.setText(newBannerText);
 
         //filling line URL
         url_line = url_line + lineSelected;

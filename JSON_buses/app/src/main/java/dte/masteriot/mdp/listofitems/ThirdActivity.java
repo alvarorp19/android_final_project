@@ -223,7 +223,7 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
         //Get information using a JSON
         dataset2 = new Dataset(this,TYPE_SPECIFIC_TRAJECTORY_LIST,content);
         myOnItemActivatedListener =
-                new MyOnItemActivatedListener(this, dataset2);
+                new MyOnItemActivatedListener(this, dataset2,MyOnItemActivatedListener.state.ACTIVITY3);
         // Prepare the RecyclerView:
         recyclerView = findViewById(R.id.recyclerView2);
         MyAdapter recyclerViewAdapter = new MyAdapter(dataset2,this,MyAdapter.ID_CALLER_THIRD_ACTIVITY);

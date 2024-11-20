@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
         //Get information using a JSON
         dataset = new Dataset(this,TYPE_ALL_LINES_LIST,content);
         myOnItemActivatedListener =
-                new MyOnItemActivatedListener(this, dataset);
+                new MyOnItemActivatedListener(this, dataset, MyOnItemActivatedListener.state.ACTIVITY1);
         // Prepare the RecyclerView:
         recyclerView = findViewById(R.id.recyclerView);
         MyAdapter recyclerViewAdapter = new MyAdapter(dataset,this,MyAdapter.ID_CALLER_MAIN_ACTIVITY);

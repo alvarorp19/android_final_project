@@ -26,10 +26,10 @@
                 android:layout_height="75dp"
                 android:textStyle="bold"
                 android:background="@color/red"
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:textColor="@color/white"
                 android:gravity="center_vertical"
-                android:text="Gijón Buses" />
+                android:text="GIJONBOARD" />
 
             <Button
                 android:id="@+id/stopButton"

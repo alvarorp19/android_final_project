@@ -16,16 +16,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:id="@+id/banner2"
+        <FrameLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/frameLayout2_2"
             android:layout_width="match_parent"
             android:layout_height="75dp"
-            android:textStyle="bold"
-            android:background="@color/red"
-            android:textSize="25sp"
-            android:textColor="@color/white"
-            android:gravity="center_vertical"
-            android:text="Gijón Buses" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/banner2"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:textStyle="bold"
+                android:background="@color/red"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:gravity="center_vertical"
+                android:text="GIJONBOARD | ROUTES LINE"  />
+
+            <ImageView
+                android:id="@+id/miImagen2"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center_vertical|right"
+                android:src="@drawable/parada_bus"/>
+
+        </FrameLayout>
 
         <Space
             android:layout_width="match_parent"

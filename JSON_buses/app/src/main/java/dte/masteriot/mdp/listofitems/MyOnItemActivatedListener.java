@@ -24,12 +24,16 @@ public class MyOnItemActivatedListener implements OnItemActivatedListener<Long> 
     private Dataset dataset; // reference to the dataset, so that the activated item's data can be accessed if necessary
     private String lines_numbers []; // this string will contain the bus lines shorted as is being represented on the main recicler view
 
+    public enum state {ACTIVITY1,ACTIVITY2,ACTIVITY3};
+    private state currentState;
+
     public static final String EXTRA_INFO_TO_SECOND_ACTIVITY = "EXTRA_INFO_2";
 
-    public MyOnItemActivatedListener(Context context, Dataset ds) {
+    public MyOnItemActivatedListener(Context context, Dataset ds, state currentState) {
         this.context = context;
         this.dataset = ds;
         this.lines_numbers = dataset.getLinesShorted();
+        this.currentState = currentState;
     }
 
     // ------ Implementation of methods ------ //
@@ -48,10 +52,22 @@ public class MyOnItemActivatedListener implements OnItemActivatedListener<Long> 
 
 //         i.putExtra("text", "Clicked item with position = " + itemdetails.getPosition()
 //                + " and key = " + itemdetails.getSelectionKey());
+
+        //if (currentState == state.ACTIVITY1){
+
+        currentState = state.ACTIVITY2;
+
         Intent intent = new Intent(context, SecondActivity.class);
         intent.putExtra(EXTRA_INFO_TO_SECOND_ACTIVITY,this.lines_numbers[itemdetails.getPosition()]);
         context.startActivity(intent);
         Log.d(MainActivity.SHORTCLICKTAG,"Pulsacion corta sobre la linea " + this.lines_numbers[itemdetails.getPosition()]);
+
+        //}else if (currentState == state.ACTIVITY3){
+
+            //ToDo: show more info about the stop or do something with it
+
+        //}
+
         return true;
     }
 }
