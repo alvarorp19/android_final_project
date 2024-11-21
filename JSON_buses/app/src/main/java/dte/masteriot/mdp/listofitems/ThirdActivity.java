@@ -125,7 +125,7 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
                     //running MQTT service
 
-                    runMQTTservice();
+                    //runMQTTservice();
 
                 }
             }
@@ -161,7 +161,7 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
                             Log.d(THIRD_ACTIVITY_TAG,"Stop requested button clicked");
 
-                            runMQTTservice();
+                            //runMQTTservice();
 
                             //notifying user that neeeds to shake the phone in order to stop the bus
 
@@ -319,12 +319,5 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
     }
 
-
-    private void runMQTTservice(){
-
-        //running MQTT services in a background thread
-        es.execute(myMqtt);
-
-    }
 }
 

@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,10 +46,16 @@ public class MainActivity extends AppCompatActivity {
     final static String LOADWEBTAG = "LOADWEB";
     final static String PARSINGJSONTAG = "PARSINGJSONTAG";
     final static String SHORTCLICKTAG = "SHORTCLICKTAG";
+    final static String MAINACTIVITYTAG = "MAINACTIVITYTAG";
 
     //Handler Keys
 
     final static String HANDLER_KEY_JSON = "jsonInfo";
+    final static String HANDLER_KEY_MQTT1 = "MQTT1Info";
+
+    //news textView
+
+    TextView MQTTnews;
 
     //Executor
     ExecutorService es;
@@ -56,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
     //JSON content to be processed
 
     private String content = "";
+
+    public Mqtt myMqtt;
 
     // Define the handler that will receive the messages from the background thread that processes the HTML request:
     Handler handler = new Handler(Looper.getMainLooper()) {
@@ -75,6 +84,11 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(LOADWEBTAG, "Contenido web recibido en el hilo princial UI" + content);
                     generateListWithAllLines();
                 }
+            }else if (data.containsKey(HANDLER_KEY_MQTT1)) {
+
+                Log.d(MAINACTIVITYTAG, "latest news from MQTT received");
+
+                MQTTnews.setText(msg.getData().getString(HANDLER_KEY_MQTT1));
             }
         }
     };
@@ -89,11 +103,16 @@ public class MainActivity extends AppCompatActivity {
 //            tracker.onRestoreInstanceState(savedInstanceState);
 //        }
 
+        MQTTnews = findViewById(R.id.textView1_2);
+
         //initializes the executor for background threads
         es = Executors.newSingleThreadExecutor();
 
         //retrieves content from all Gijon buses lines
         loadAllLines();
+
+        //connecting with MQTT broker
+        runMQTTservice();
     }
 
     @Override
@@ -186,6 +205,15 @@ public class MainActivity extends AppCompatActivity {
                 .withOnItemActivatedListener(myOnItemActivatedListener)
                 .build();
         recyclerViewAdapter.setSelectionTracker(tracker);
+    }
+
+
+    public void runMQTTservice(){
+
+        //running MQTT services in a background thread
+        this.myMqtt = new Mqtt(handler);
+        es.execute(myMqtt);
+
     }
 
 

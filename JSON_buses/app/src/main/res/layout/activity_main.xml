@@ -7,7 +7,6 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/LinearLayout1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -42,7 +41,6 @@
         </FrameLayout>
 
         <FrameLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/frameLayout1_2"
             android:layout_width="match_parent"
             android:layout_height="100dp"
@@ -57,14 +55,15 @@
 
             <TextView
                 android:id="@+id/textView1_2"
-                android:layout_width="300dp"
+                android:layout_width="280dp"
                 android:layout_height="60dp"
-                android:textStyle="bold"
-                android:textSize="15sp"
-                android:textColor="@color/black"
-                android:gravity="center"
                 android:layout_gravity="center_vertical|center_horizontal"
-                android:text="THIS IS A NEW"  />
+                android:layout_marginLeft="20dp"
+                android:gravity="center"
+                android:text="connecting with MQTT broker"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/miImagen1_2"
@@ -80,7 +79,7 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="15dp"
+            android:layout_margin="1dp"
             app:layout_constraintBottom_toTopOf="@+id/layout_buttons"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

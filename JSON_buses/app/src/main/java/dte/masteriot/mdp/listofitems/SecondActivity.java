@@ -99,7 +99,11 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
                 Log.d(SECOND_ACTIVITY_TAG, "OUTBOUND button pressed");
 
                 if (linecontentHasBeenRetrieved){
-                    launchThirdActivity(IdtrayectosLine.get(0)); //first position equals to outbound route
+                    try {
+                        launchThirdActivity(IdtrayectosLine.get(0)); //first position equals to outbound route
+                    }catch (Exception e){
+                        Toast.makeText(SecondActivity.this, "Information from stops couldn't be retreived yet", Toast.LENGTH_SHORT).show();
+                    }
                 }else{
 
                     Toast.makeText(SecondActivity.this, "Information from stops couldn't be retreived yet", Toast.LENGTH_SHORT).show();
@@ -115,7 +119,13 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
                 Log.d(SECOND_ACTIVITY_TAG, "RETURN button pressed");
 
                 if (linecontentHasBeenRetrieved){
-                    launchThirdActivity(IdtrayectosLine.get(1)); //second position equals to return route
+                    try{
+                        launchThirdActivity(IdtrayectosLine.get(1)); //second position equals to return route
+                    }catch (Exception e){
+                        
+                        Toast.makeText(SecondActivity.this, "Information from stops couldn't be retreived yet", Toast.LENGTH_SHORT).show();
+                    }
+
                 }else{
 
                     Toast.makeText(SecondActivity.this, "Information from stops couldn't be retreived yet", Toast.LENGTH_SHORT).show();

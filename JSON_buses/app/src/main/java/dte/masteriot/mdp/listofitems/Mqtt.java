@@ -40,11 +40,19 @@ public class Mqtt implements Runnable{
         DISCONNECTED, CONNECTED
     }
 
+    private  Object lock = new Object();
+
     connectionStatus status = connectionStatus.DISCONNECTED;
 
+    //constructor 1
     Mqtt(Handler handler){
 
         this.creator = handler;
+    }
+
+    //constructor 1
+    Mqtt(){
+
     }
 
 
@@ -72,8 +80,8 @@ public class Mqtt implements Runnable{
                     status = connectionStatus.CONNECTED;
 
                     //Notifying UI thread that MQTT client has been connected successfully
-                    msg_data.putString(ThirdActivity.HANDLER_KEY_MQTT,CONNECTED);
-                    msg.sendToTarget();
+                    //msg_data.putString(MainActivity.HANDLER_KEY_MQTT1,CONNECTED);
+                    //msg.sendToTarget();
 
                     subscribeToNewsTopic();
                 }
@@ -89,6 +97,17 @@ public class Mqtt implements Runnable{
                 .callback(publish -> {
                     String message = new String(publish.getPayloadAsBytes(), StandardCharsets.UTF_8);
                     Log.d(TAG, "News Message Received: " + message);
+
+                    //sending the news to main activity
+                    msg = creator.obtainMessage();
+                    msg_data = msg.getData();
+                    msg_data.putString(MainActivity.HANDLER_KEY_MQTT1,message);
+                    msg.sendToTarget();
+
+                    //notifying self task
+                    synchronized (lock){
+                        lock.notify();
+                    }
 
                 })
                 .send()
@@ -152,28 +171,63 @@ public class Mqtt implements Runnable{
     }
 
 
+    boolean MQTTclientIsConnected(){
+
+        if (status == connectionStatus.CONNECTED){
+
+            return true;
+
+        }else{
+
+            return false;
+
+        }
+
+    }
+
+    void chargeNewHandler(Handler newHandler){
+
+        this.handler = newHandler;
+
+
+    }
+
+
     @Override
     public void run() {
 
         //thread routine where MQTT service will be running
         Log.d(TAG,"Executing MQTT thread");
 
-        if(status == connectionStatus.DISCONNECTED){
+        //if(status == connectionStatus.DISCONNECTED){
 
-            msg = creator.obtainMessage();
-            msg_data = msg.getData();
+        //creating MQTT client
+        createMQTTclient();
+        //here we are subscribing to news topic and for this moment we are publishing info in one
+        //topic in order to check MQQT functionalities
+        connectToBroker();
 
-            //creating MQTT client
-            createMQTTclient();
-            //here we are subscribing to news topic and for this moment we are publishing info in one
-            //topic in order to check MQQT functionalities
-            connectToBroker();
-
-        }else if(status == connectionStatus.CONNECTED){
+        //}else if(status == connectionStatus.CONNECTED){
 
             //when the program reach this point means that the button has been pressed
             //so we publish on the topic
-            publishStopRequest();
+            //publishStopRequest();
+
+        //}
+
+        while(true){
+
+            //wait until an event occurs
+            synchronized (lock){
+
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+
 
         }
 
