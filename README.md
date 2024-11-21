@@ -14,3 +14,4 @@
 - [ ] si es de noche no hay datos en el JSON de los trayectos ,corregir
 - [ ] Mantener el ultimo mensaje de MQTT recibido en la actividad 1 si nos habiamos conectado previamente
 - [ ] utilizar el buzzer cada vez que se pulsa un boton
+- [ ] refrescar el reciclerView de la tercera actividad cada 30 segundos
