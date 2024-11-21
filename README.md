@@ -12,3 +12,4 @@
 - [ ] Comprobar como funciona la app cuando no hay conexion (los botones no funcionan bien)
 - [ ] hay lineas que no tienen ninguna ruta, arreglar
 - [ ] si es de noche no hay datos en el JSON de los trayectos ,corregir
+- [ ] Mantener el ultimo mensaje de MQTT recibido en la actividad 1 si nos habiamos conectado previamente
