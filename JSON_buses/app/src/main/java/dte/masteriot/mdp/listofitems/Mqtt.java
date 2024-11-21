@@ -68,6 +68,7 @@ public class Mqtt implements Runnable{
                 if (throwable != null) {
                     Log.d(TAG, "Problem connecting to server:");
                     Log.d(TAG, throwable.toString());
+                    //Todo: mostrar toast
                 } else {
                     Log.d(TAG, "Connected to server");
 
@@ -148,11 +149,11 @@ public class Mqtt implements Runnable{
 //        handler.post(publishRunnable); // Start the first publish
 //    }
 
-    void stopPeriodicPublishing() {
-        if (publishRunnable != null) {
-            handler.removeCallbacks(publishRunnable);
-        }
-    }
+//    void stopPeriodicPublishing() {
+//        if (publishRunnable != null) {
+//            handler.removeCallbacks(publishRunnable);
+//        }
+//    }
 
     void disconnectFromBroker() {
         if (client != null) {
@@ -171,6 +172,15 @@ public class Mqtt implements Runnable{
     }
 
 
+//    public static void defaultReconnect() {
+//
+//                 client
+//                .serverHost("broker.hivemq.com")
+//                .automaticReconnectWithDefaultConfig() // exponential backoff, 1s initial, doubled up to 2min, random delays +-25%
+//                .buildBlocking();
+//    }
+
+
     public static boolean MQTTclientIsConnected(){
 
         if (status == connectionStatus.CONNECTED){
@@ -182,13 +192,6 @@ public class Mqtt implements Runnable{
             return false;
 
         }
-
-    }
-
-    void chargeNewHandler(Handler newHandler){
-
-        this.handler = newHandler;
-
 
     }
 

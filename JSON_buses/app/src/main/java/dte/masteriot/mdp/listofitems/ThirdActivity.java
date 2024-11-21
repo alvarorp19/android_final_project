@@ -1,8 +1,14 @@
 package dte.masteriot.mdp.listofitems;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,9 +17,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.Manifest;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.selection.ItemKeyProvider;
 import androidx.recyclerview.selection.SelectionTracker;
 import androidx.recyclerview.selection.StorageStrategy;
@@ -36,27 +45,10 @@ import java.util.concurrent.Executors;
 
 import dte.masteriot.mdp.listofitems.databinding.ActivityThirdBinding;
 
-import com.google.android.gms.location.CurrentLocationRequest;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.Priority;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-//import com.example.google_maps_views.databinding.ActivityMapsBinding;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.CancellationTokenSource;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import  com.google.android.gms.tasks.Task.*;
 
-public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnMapReadyCallback{
+
+public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnMapReadyCallback, SensorEventListener {
 
     private String url_line_trajectory = "https://vitesia.mytrama.com/emtusasiri/trayectos/trayectos/";
     private String lineSelected = "0";
@@ -92,6 +84,13 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
     Map<Integer, LatLng> markersMap = new HashMap<>();
 
     private Button stopButton;
+
+    private Sensor stepSensor;
+    private SensorManager sensorManager;
+    private SensorManager StepSensorManager;
+    private int stepCount = 0;
+
+    private static final int REQUEST_CODE_ACTIVITY_RECOGNITION = 1;
 
     // Define the handler that will receive the messages from the background thread that processes the HTML request:
     Handler handler = new Handler(Looper.getMainLooper()) {
@@ -140,6 +139,21 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
         binding = ActivityThirdBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        //enabling step counter
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        StepSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+
+        //cheking permissions
+
+        if( ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED){
+//            //ask for permission
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACTIVITY_RECOGNITION},
+                    REQUEST_CODE_ACTIVITY_RECOGNITION);
+        }
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -167,15 +181,27 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
                     //Notifying user
                     Toast.makeText(ThirdActivity.this, "SHAKE THE PHONE TO STOP THE BUS!!", Toast.LENGTH_SHORT).show();
 
-                    //publishing info at MQTT
-
-                    Mqtt.publishStopRequest(lineSelected,trajectorySelected);
+                    //registering callback for step counter
+                    stepCount = 0;
+                    StepSensorManager.registerListener(ThirdActivity.this,stepSensor,SensorManager.SENSOR_DELAY_NORMAL);
 
 
                 }else{
 
-                    //trying to reconnect with MQTT broker
-                    Mqtt.connectToBroker();
+                    //trying to reconnect with MQTT broker (This case shouldn't be reached)
+                    try{
+                        Mqtt.connectToBroker();
+
+                        //Notifying user
+                        Toast.makeText(ThirdActivity.this, "UNABLE TO REQUEST THE STOP NOW!!", Toast.LENGTH_SHORT).show();
+
+                        //disable step counter
+
+
+
+                    }catch (Exception e){
+                        Log.d(THIRD_ACTIVITY_TAG,"problem connecting with MQTT");
+                    }
 
                 }
 
@@ -193,6 +219,7 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
         //requesting content from created URL through HTTP
         loadSpecifictrayectory();
+
     }
 
 
@@ -304,6 +331,40 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
         }
 
+    }
+
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+
+        //first we need to filter each event
+
+        if (sensorEvent.sensor == stepSensor) {
+
+            if(Mqtt.MQTTclientIsConnected()){
+
+                stepCount++;
+
+                if(stepCount == 3){
+
+                    //publishing that user wants to stop the bus
+                    Log.d(THIRD_ACTIVITY_TAG,"Stop requested!!!");
+
+                    Mqtt.publishStopRequest(lineSelected,trajectorySelected);
+
+                    stepCount = 0;
+
+                    StepSensorManager.unregisterListener(ThirdActivity.this,stepSensor);
+
+                }
+            }
+
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+        // In this app we do nothing if sensor's accuracy changes
     }
 
 }
