@@ -132,51 +132,6 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
         }
     };
 
-
-
-    Handler handler2 = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-
-            Bundle data = msg.getData();  // Obtén el Bundle asociado al Message
-
-            //All lines
-            if(data.containsKey(HANDLER_KEY_MQTT)){
-
-                Log.d(THIRD_ACTIVITY_TAG,"MQTT message received!");
-
-                if ((msg.getData().getString(HANDLER_KEY_MQTT)).equals(Mqtt.CONNECTED)) {
-
-                    Log.d(THIRD_ACTIVITY_TAG,"callback for request button has been enabled");
-
-                    stopButton.setText("STOP REQUEST");
-
-                    stopButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-
-                            //publishing on MQTT topic
-
-                            Log.d(THIRD_ACTIVITY_TAG,"Stop requested button clicked");
-
-                            //runMQTTservice();
-
-                            //notifying user that neeeds to shake the phone in order to stop the bus
-
-                            Toast.makeText(ThirdActivity.this, "SHAKE THE PHONE TO STOP THE BUS!!", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-
-                }
-            }
-        }
-    };
-
-    Mqtt myMqtt = new Mqtt(handler2);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -197,6 +152,38 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
         Log.d(THIRD_ACTIVITY_TAG,"LINE: " + lineSelected + "Trajectory: " + trajectorySelected);
 
         stopButton = findViewById(R.id.stopButton);
+
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                //publishing on MQTT topic
+
+                Log.d(THIRD_ACTIVITY_TAG,"Stop requested button clicked");
+
+                if (Mqtt.MQTTclientIsConnected()){
+
+                    //Notifying user
+                    Toast.makeText(ThirdActivity.this, "SHAKE THE PHONE TO STOP THE BUS!!", Toast.LENGTH_SHORT).show();
+
+                    //publishing info at MQTT
+
+                    Mqtt.publishStopRequest(lineSelected,trajectorySelected);
+
+
+                }else{
+
+                    //trying to reconnect with MQTT broker
+                    Mqtt.connectToBroker();
+
+                }
+
+                //runMQTTservice();
+
+                //notifying user that neeeds to shake the phone in order to stop the bus
+            }
+        });
 
         //mounting URL
         url_line_trajectory = url_line_trajectory + "/" + lineSelected + "/" + trajectorySelected;

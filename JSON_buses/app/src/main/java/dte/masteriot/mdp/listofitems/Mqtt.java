@@ -14,16 +14,16 @@ public class Mqtt implements Runnable{
 
     public final static String CONNECTED = "1";
 
-    private String TAG = "TAG_MDPMQTT";
+    private static String TAG = "TAG_MDPMQTT";
     String serverHost = "broker.hivemq.com";  // Replace with your Mosquitto broker's IP if different
     int serverPort = 1883;
 
     // Topics
-    String newsTopic = "gijonboard/news";
-    String stopRequestTopic = "stop/1/1";
+    private static String newsTopic = "gijonboard/news";
+    private static String stopRequestTopic = "stop/";
 
     // MQTT Client
-    Mqtt3AsyncClient client;
+    private static Mqtt3AsyncClient client;
     Handler handler = new Handler();
     Runnable publishRunnable;
 
@@ -32,27 +32,22 @@ public class Mqtt implements Runnable{
 
     //thread info
 
-    private Handler creator; //here we store the handler object created by the UI thread
-    private Message msg;
-    private Bundle msg_data;
+    private static Handler creator; //here we store the handler object created by the UI thread
+    private static Message msg;
+    private static Bundle msg_data;
 
     public enum connectionStatus {
         DISCONNECTED, CONNECTED
     }
 
-    private  Object lock = new Object();
+    private  static Object lock = new Object();
 
-    connectionStatus status = connectionStatus.DISCONNECTED;
+    static connectionStatus status = connectionStatus.DISCONNECTED;
 
     //constructor 1
     Mqtt(Handler handler){
 
         this.creator = handler;
-    }
-
-    //constructor 1
-    Mqtt(){
-
     }
 
 
@@ -66,7 +61,7 @@ public class Mqtt implements Runnable{
                 .buildAsync();
     }
 
-    void connectToBroker() {
+    public static void connectToBroker() {
         if (client != null) {
             client.connect().whenComplete((connAck, throwable) -> {
                 // Handle connection complete
@@ -91,7 +86,7 @@ public class Mqtt implements Runnable{
         }
     }
 
-    void subscribeToNewsTopic() {
+    private static void subscribeToNewsTopic() {
         client.subscribeWith()
                 .topicFilter(newsTopic)
                 .callback(publish -> {
@@ -121,10 +116,15 @@ public class Mqtt implements Runnable{
                 });
     }
 
-    void publishStopRequest() {
-        String message = "Stop request from Android";
+    public static void publishStopRequest(String line, String route) {
+
+        String message = "Stop request in line " + line + " route " + route;
+        String newRequestTopic = stopRequestTopic + line + "/" + route;
+
+        Log.d(TAG,"Publishing at " + newRequestTopic);
+
         client.publishWith()
-                .topic(stopRequestTopic)
+                .topic(newRequestTopic)
                 .payload(message.getBytes(StandardCharsets.UTF_8))
                 .send()
                 .whenComplete((publish, throwable) -> {
@@ -171,7 +171,7 @@ public class Mqtt implements Runnable{
     }
 
 
-    boolean MQTTclientIsConnected(){
+    public static boolean MQTTclientIsConnected(){
 
         if (status == connectionStatus.CONNECTED){
 
