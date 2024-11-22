@@ -16,3 +16,4 @@
 - [X] utilizar el buzzer cada vez que se pulsa un boton
 - [X] refrescar el reciclerView de la tercera actividad cada 30 segundos
 - [ ] mirar porque no refresca bien el mapa
+- [ ] mirar talkback
