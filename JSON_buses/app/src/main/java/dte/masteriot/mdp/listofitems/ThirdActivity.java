@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -90,6 +92,8 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
     private SensorManager StepSensorManager;
     private int stepCount = 0;
 
+    private Vibrator vibrator;
+
     private Runnable runnable;
 
     private static final int REQUEST_CODE_ACTIVITY_RECOGNITION = 1;
@@ -148,11 +152,14 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
         StepSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
 
+        //vibrator initialization
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
         //cheking permissions
 
         if( ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED){
-//            //ask for permission
+            //ask for permission
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACTIVITY_RECOGNITION},
                     REQUEST_CODE_ACTIVITY_RECOGNITION);
@@ -372,6 +379,10 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
                     StepSensorManager.unregisterListener(ThirdActivity.this,stepSensor);
 
+                    //notifying user with a vibration
+
+                    performVibration();
+
                 }
             }
 
@@ -381,6 +392,25 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
         // In this app we do nothing if sensor's accuracy changes
+    }
+
+
+    public void performVibration(){
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+            // this effect creates the vibration of default amplitude for 1000ms(1 sec)
+            VibrationEffect vibrationEffect1;
+            vibrationEffect1 = VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE);
+
+            // it is safe to cancel other vibrations currently taking place
+            vibrator.cancel();
+            vibrator.vibrate(vibrationEffect1);
+
+        }else {
+            //deprecated in API 26
+            vibrator.vibrate(500);
+        }
     }
 
 }
