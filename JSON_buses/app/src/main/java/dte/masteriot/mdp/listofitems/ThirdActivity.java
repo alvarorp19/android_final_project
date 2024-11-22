@@ -90,6 +90,8 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
     private SensorManager StepSensorManager;
     private int stepCount = 0;
 
+    private Runnable runnable;
+
     private static final int REQUEST_CODE_ACTIVITY_RECOGNITION = 1;
 
     // Define the handler that will receive the messages from the background thread that processes the HTML request:
@@ -130,6 +132,8 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
             }
         }
     };
+
+    private Handler handler2 = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -217,8 +221,20 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
         //initializes the executor for background threads
         es = Executors.newSingleThreadExecutor();
 
-        //requesting content from created URL through HTTP
-        loadSpecifictrayectory();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+
+                Log.d(THIRD_ACTIVITY_TAG,"Updating reciclerView!!!");
+
+                // each 1 second
+                //requesting content from created URL through HTTP
+                loadSpecifictrayectory();
+                handler2.postDelayed(this, 30000);
+            }
+        };
+
+        handler2.post(runnable);
 
     }
 
