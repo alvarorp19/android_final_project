@@ -108,7 +108,7 @@ public interface JSONParsing {
     }
 
 
-    default void JSONParseATrajectory(String content, Map<Integer, String []> TrayectoryDescriptionList) throws JSONException, IOException{
+    default boolean JSONParseATrajectory(String content, Map<Integer, String []> TrayectoryDescriptionList) throws JSONException, IOException{
 
         Log.d(MainActivity.PARSINGJSONTAG,"Parsing a specific trajectory");
         String string_json = content;
@@ -173,7 +173,11 @@ public interface JSONParsing {
 
             Log.d(MainActivity.PARSINGJSONTAG,"EXCEPCION " + e);
 
+            return false;
+
         }
+
+        return true;
 
     }
 

@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
     public Mqtt myMqtt;
 
+    private TextView textNoConnection;
     // Define the handler that will receive the messages from the background thread that processes the HTML request:
     Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -82,6 +83,11 @@ public class MainActivity extends AppCompatActivity {
                 if ((string_result = msg.getData().getString(HANDLER_KEY_JSON)) != null) {
                     content = string_result;
                     Log.d(LOADWEBTAG, "Contenido web recibido en el hilo princial UI" + content);
+
+                    if (content.equals("") == false){
+                        textNoConnection.setText("");
+                    }
+
                     generateListWithAllLines();
                 }
             }else if (data.containsKey(HANDLER_KEY_MQTT1)) {
@@ -102,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
 //            // Restore state related to selections previously made
 //            tracker.onRestoreInstanceState(savedInstanceState);
 //        }
+        textNoConnection = findViewById(R.id.textNoConnection1);
 
         MQTTnews = findViewById(R.id.textView1_2);
 

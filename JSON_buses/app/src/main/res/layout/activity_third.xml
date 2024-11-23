@@ -66,6 +66,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/textNoConnection"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:text="No data available yet!" />
+
         </FrameLayout>
 
             <FrameLayout
@@ -91,6 +102,8 @@
                     android:layout_height="match_parent"
                     android:layout_margin="15dp"
                     tools:context=".ThirdActivity" />
+
+
             </FrameLayout>
     </LinearLayout>
 </LinearLayout>

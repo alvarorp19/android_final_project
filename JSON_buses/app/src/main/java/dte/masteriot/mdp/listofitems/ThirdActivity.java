@@ -18,6 +18,7 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.Manifest;
 
@@ -86,6 +87,7 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
     Map<Integer, LatLng> markersMap = new HashMap<>();
 
     private Button stopButton;
+    private TextView textNoConnection;
 
     private Sensor stepSensor;
     private SensorManager sensorManager;
@@ -177,6 +179,7 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
         Log.d(THIRD_ACTIVITY_TAG,"LINE: " + lineSelected + "Trajectory: " + trajectorySelected);
 
         stopButton = findViewById(R.id.stopButton);
+        textNoConnection = findViewById(R.id.textNoConnection);
 
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -259,6 +262,15 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
         //Get information using a JSON
         dataset2 = new Dataset(this,TYPE_SPECIFIC_TRAJECTORY_LIST,content);
+
+        //showing message if data is not available yet
+
+        if (dataset2.trajectoryContainUsefulInfo()){
+            textNoConnection.setText("");
+        }else{
+            textNoConnection.setText(R.string.No_connection);
+        }
+
         myOnItemActivatedListener =
                 new MyOnItemActivatedListener(this, dataset2,MyOnItemActivatedListener.state.ACTIVITY3);
         // Prepare the RecyclerView:

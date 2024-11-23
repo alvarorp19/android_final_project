@@ -36,6 +36,8 @@ public class Dataset implements JSONParsing{
     //drawables references sorted by JSON lines order
     private Drawable refDrawables [];
 
+    private boolean successfulTrajectory = false;
+
     Dataset(Context context, int typeList, String content) {
 
         listofitems = new ArrayList<>();
@@ -88,7 +90,7 @@ public class Dataset implements JSONParsing{
             }
         }else if (this.type == ThirdActivity.TYPE_SPECIFIC_TRAJECTORY_LIST){
             try {
-                JSONParseATrajectory(this.content, this.TrayectoryMap);
+                successfulTrajectory = JSONParseATrajectory(this.content, this.TrayectoryMap);
                 for (Integer i = 0; i < TrayectoryMap.size(); ++i) {
                     String parada [] = TrayectoryMap.get(i);
                     listofitems.add(new Item(parada[6] + " min", parada[0] , (long) i, drawables_lines[getLinePositionInJson(parada[8])]));
@@ -155,6 +157,12 @@ public class Dataset implements JSONParsing{
     public Map<Integer, String []> getTrayectoryMap(){
 
         return this.TrayectoryMap;
+    }
+
+
+    public boolean trajectoryContainUsefulInfo(){
+
+        return this.successfulTrajectory;
     }
 
 
