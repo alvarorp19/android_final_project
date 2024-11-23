@@ -339,11 +339,17 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
     private void getMarkersFromSelectedTrayectory(){
 
         for (Integer i =0; i < dataset2.getTrayectoryMap().size();i++){
-            String parada [] = dataset2.getTrayectoryMap().get(i);
 
-            LatLng mapPosition = new LatLng(Double.parseDouble(parada[3]),Double.parseDouble(parada[2]));
-            this.markersMap.put(i,mapPosition);
-            Log.d("TERCERAACTIVIDAD",Double.parseDouble(parada[3]) + " " + Double.parseDouble(parada[2]));
+            try{
+                String parada [] = dataset2.getTrayectoryMap().get(i);
+
+                LatLng mapPosition = new LatLng(Double.parseDouble(parada[3]),Double.parseDouble(parada[2]));
+                this.markersMap.put(i,mapPosition);
+                Log.d("TERCERAACTIVIDAD",Double.parseDouble(parada[3]) + " " + Double.parseDouble(parada[2]));
+
+            }catch (Exception e){
+                //nothing to do here
+            }
         }
 
     }
@@ -375,11 +381,16 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
         for (int i = 0; i < (this.markersMap.size() - 1); i++){
 
             //here we need to join two points
+            try{
 
-            mMap.addPolyline(new PolylineOptions()
-                            .add(markersMap.get(i),markersMap.get(i + 1))//points to join
-                            .width(10f)//line width
-                            .color(Color.RED));
+                mMap.addPolyline(new PolylineOptions()
+                        .add(markersMap.get(i),markersMap.get(i + 1))//points to join
+                        .width(10f)//line width
+                        .color(Color.RED));
+
+            }catch (Exception e){
+                //nothing to do here
+            }
 
 
         }

@@ -134,44 +134,52 @@ public interface JSONParsing {
 
             for (Integer i = 0; i < ParadasArray.length(); i++) {
 
-                infoParada = new String[INFO_TO_RECEIVE_TRAJECTORY_QUERY];
+                try{
+
+                    infoParada = new String[INFO_TO_RECEIVE_TRAJECTORY_QUERY];
 
 
-                //processing JSON
-                JSONObject parada = (JSONObject) ParadasArray.get(i);
-                idParada = parada.getString("idParada");
+                    //processing JSON
+                    JSONObject parada = (JSONObject) ParadasArray.get(i);
+                    idParada = parada.getString("idParada");
 
-                JSONArray arrayWithStopInfo = parada.getJSONArray("listaLlegadas");
-                JSONObject jsonStopInfo = arrayWithStopInfo.getJSONObject(0);
+                    JSONArray arrayWithStopInfo = parada.getJSONArray("listaLlegadas");
+                    JSONObject jsonStopInfo = arrayWithStopInfo.getJSONObject(0);
 
-                //Getting fiels
-                descriptionParada = parada.getString("descripcion");
-                longitud = parada.getString("longitud");
-                latidud = parada.getString("latitud");
-                autobusEnParada = parada.getString("autobusEnParada");
-                idAutobus = jsonStopInfo.getString("idautobus");
-                minutesToArrive = jsonStopInfo.getString("minutos");
-                distanceToArrive = jsonStopInfo.getString("distancia");
-                lineNumber = jsonStopInfo.getString("idlinea");
+                    //Getting fiels
+                    descriptionParada = parada.getString("descripcion");
+                    longitud = parada.getString("longitud");
+                    latidud = parada.getString("latitud");
+                    autobusEnParada = parada.getString("autobusEnParada");
+                    idAutobus = jsonStopInfo.getString("idautobus");
+                    minutesToArrive = jsonStopInfo.getString("minutos");
+                    distanceToArrive = jsonStopInfo.getString("distancia");
+                    lineNumber = jsonStopInfo.getString("idlinea");
 
-                Log.d(MainActivity.PARSINGJSONTAG,"Info parada " + descriptionParada + ": " + longitud + " "
-                        + latidud + " " + autobusEnParada + " " + idAutobus + " " + minutesToArrive + " "
-                        + distanceToArrive + " " + lineNumber);
+                    Log.d(MainActivity.PARSINGJSONTAG,"Info parada " + descriptionParada + ": " + longitud + " "
+                            + latidud + " " + autobusEnParada + " " + idAutobus + " " + minutesToArrive + " "
+                            + distanceToArrive + " " + lineNumber);
 
-                infoParada[0] = descriptionParada;
-                infoParada[1] = idParada;
-                infoParada[2] = longitud;
-                infoParada[3] = latidud;
-                infoParada[4] = autobusEnParada;
-                infoParada[5] = idAutobus;
-                infoParada[6] = minutesToArrive;
-                infoParada[7] = distanceToArrive;
-                infoParada[8] = lineNumber;
+                    infoParada[0] = descriptionParada;
+                    infoParada[1] = idParada;
+                    infoParada[2] = longitud;
+                    infoParada[3] = latidud;
+                    infoParada[4] = autobusEnParada;
+                    infoParada[5] = idAutobus;
+                    infoParada[6] = minutesToArrive;
+                    infoParada[7] = distanceToArrive;
+                    infoParada[8] = lineNumber;
 
-                TrayectoryDescriptionList.put(i,infoParada);
+                    TrayectoryDescriptionList.put(i,infoParada);
 
-                //at this point we have some useful info about at least one stop
-                ret = true;
+                    //at this point we have some useful info about at least one stop
+                    ret = true;
+
+                }catch (Exception e){
+                    //nothing to do here
+                }
+
+
             }
 
         }catch(Exception e){

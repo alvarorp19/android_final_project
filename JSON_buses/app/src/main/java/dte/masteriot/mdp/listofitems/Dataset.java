@@ -92,8 +92,13 @@ public class Dataset implements JSONParsing{
             try {
                 successfulTrajectory = JSONParseATrajectory(this.content, this.TrayectoryMap);
                 for (Integer i = 0; i < TrayectoryMap.size(); ++i) {
-                    String parada [] = TrayectoryMap.get(i);
-                    listofitems.add(new Item(parada[6] + " min", parada[0] , (long) i, drawables_lines[getLinePositionInJson(parada[8])]));
+                    try{
+                        //some stops can contain a null array
+                        String parada [] = TrayectoryMap.get(i);
+                        listofitems.add(new Item(parada[6] + " min", parada[0] , (long) i, drawables_lines[getLinePositionInJson(parada[8])]));
+                    }catch (Exception e){
+                        //nothing to do here
+                    }
                 }
             } catch (JSONException e) {
                 throw new RuntimeException(e);
