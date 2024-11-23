@@ -53,20 +53,16 @@ public class MyOnItemActivatedListener implements OnItemActivatedListener<Long> 
 //         i.putExtra("text", "Clicked item with position = " + itemdetails.getPosition()
 //                + " and key = " + itemdetails.getSelectionKey());
 
-        //if (currentState == state.ACTIVITY1){
+        //the reciclerView on the first activity is the only one that is clickable
 
-        currentState = state.ACTIVITY2;
+        if (currentState == state.ACTIVITY1){
 
-        Intent intent = new Intent(context, SecondActivity.class);
-        intent.putExtra(EXTRA_INFO_TO_SECOND_ACTIVITY,this.lines_numbers[itemdetails.getPosition()]);
-        context.startActivity(intent);
-        Log.d(MainActivity.SHORTCLICKTAG,"Pulsacion corta sobre la linea " + this.lines_numbers[itemdetails.getPosition()]);
+            Intent intent = new Intent(context, SecondActivity.class);
+            intent.putExtra(EXTRA_INFO_TO_SECOND_ACTIVITY,this.lines_numbers[itemdetails.getPosition()]);
+            context.startActivity(intent);
+            Log.d(MainActivity.SHORTCLICKTAG,"Pulsacion corta sobre la linea " + this.lines_numbers[itemdetails.getPosition()]);
 
-        //}else if (currentState == state.ACTIVITY3){
-
-            //ToDo: show more info about the stop or do something with it
-
-        //}
+        }
 
         return true;
     }
