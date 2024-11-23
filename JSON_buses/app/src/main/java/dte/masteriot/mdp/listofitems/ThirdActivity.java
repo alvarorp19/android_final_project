@@ -39,9 +39,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -122,6 +125,10 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
                     //getting maps info
                     getMarkersFromSelectedTrayectory();
+
+                    //clearing all elements on the map
+
+                    mMap.clear();
 
                     //setting markers on maps
                     putMarkersOnMaps();
@@ -347,9 +354,12 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
         for (Integer i = 0; i < this.markersMap.size();i++){
 
             String parada [] = dataset2.getTrayectoryMap().get(i);
-            mMap.addMarker(new MarkerOptions().position(this.markersMap.get(i)).title(parada[0] + " (No: "+ parada[1] + ")" + ", " + parada[6] + " minutes left"));
+            Marker newMarker = mMap.addMarker(new MarkerOptions().position(this.markersMap.get(i)).title(parada[0] + " (No: "+ parada[1] + ")" + ", " + parada[6] + " minutes left"));
+            //markerOnMap.add(i,newMarker);
         }
     }
+
+
 
 
     private void joinMarkersOnMaps(){
