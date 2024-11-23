@@ -15,6 +15,6 @@
 - [X] Mantener el ultimo mensaje de MQTT recibido en la actividad 1 si nos habiamos conectado previamente
 - [X] utilizar el buzzer cada vez que se pulsa un boton
 - [X] refrescar el reciclerView de la tercera actividad cada 30 segundos
-- [ ] mirar porque no refresca bien el mapa
+- [X] mirar porque no refresca bien el mapa
 - [X] mirar talkback
 - [X] hacer que si se pulsa un elemento del tercer reciclerView no haga nada
