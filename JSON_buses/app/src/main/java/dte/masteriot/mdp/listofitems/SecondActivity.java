@@ -108,6 +108,9 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
 
                     Toast.makeText(SecondActivity.this, "Information from stops couldn't be retreived yet", Toast.LENGTH_SHORT).show();
 
+                    //get line information from URL (this will retrieves a JON file)
+                    loadSpecificLine();
+
                 }
                 //Log.d(SECOND_ACTIVITY_TAG,);
             }
@@ -129,6 +132,9 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
                 }else{
 
                     Toast.makeText(SecondActivity.this, "Information from stops couldn't be retreived yet", Toast.LENGTH_SHORT).show();
+
+                    //get line information from URL (this will retrieves a JON file)
+                    loadSpecificLine();
                 }
             }
         });
@@ -146,7 +152,7 @@ public class SecondActivity extends AppCompatActivity implements JSONParsing{
     private void loadSpecificLine() {
 
         // Execute the loading task in background in order to get the JSON with a specific information lines:
-        LoadURLContents loadURLContents = new LoadURLContents(handler, CONTENT_TYPE_JSON, url_line);
+        LoadURLContents loadURLContents = new LoadURLContents(handler, CONTENT_TYPE_JSON, url_line,SecondActivity.this);
         es.execute(loadURLContents);
     }
 

@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.widget.TextView;  // Import TextView
+
+import com.hivemq.client.mqtt.MqttClientState;
 import com.hivemq.client.mqtt.mqtt3.Mqtt3AsyncClient;
 import com.hivemq.client.mqtt.MqttClient;
 import java.nio.charset.StandardCharsets;
@@ -37,12 +39,12 @@ public class Mqtt implements Runnable{
     private static Bundle msg_data;
 
     public enum connectionStatus {
-        DISCONNECTED, CONNECTED
+        IDLE ,DISCONNECTED, CONNECTED
     }
 
     private  static Object lock = new Object();
 
-    static connectionStatus status = connectionStatus.DISCONNECTED;
+    static connectionStatus statusConnected = connectionStatus.IDLE;
 
     //constructor 1
     Mqtt(Handler handler){
@@ -58,6 +60,14 @@ public class Mqtt implements Runnable{
                 .serverHost(serverHost)
                 .serverPort(serverPort)
                 .automaticReconnectWithDefaultConfig()
+                .addDisconnectedListener(context -> {
+                    //Log.d(TAG, "mqtt client disconnected!");
+                    if (context.getCause() != null && client.getState() == MqttClientState.CONNECTING_RECONNECT ) {
+
+                        Log.d(TAG, "mqtt client disconnected!");
+                        statusConnected = connectionStatus.DISCONNECTED;
+                    }
+                })
                 .buildAsync();
     }
 
@@ -73,8 +83,7 @@ public class Mqtt implements Runnable{
                     Log.d(TAG, "Connected to server");
 
                     //changing the client status
-                    status = connectionStatus.CONNECTED;
-
+                    statusConnected = connectionStatus.CONNECTED;
                     //Notifying UI thread that MQTT client has been connected successfully
                     //msg_data.putString(MainActivity.HANDLER_KEY_MQTT1,CONNECTED);
                     //msg.sendToTarget();
@@ -183,7 +192,7 @@ public class Mqtt implements Runnable{
 
     public static boolean MQTTclientIsConnected(){
 
-        if (status == connectionStatus.CONNECTED){
+        if (client.getState() == MqttClientState.CONNECTED){
 
             return true;
 

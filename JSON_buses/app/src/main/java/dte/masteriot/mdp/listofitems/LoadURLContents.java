@@ -1,6 +1,11 @@
 package dte.masteriot.mdp.listofitems;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,9 +24,10 @@ public class LoadURLContents implements Runnable {
     Handler creator; // handler to the main activity, who creates this task
     private final String expectedContent_type;
     private String strURL;
+    private Context context;
 
 
-    public LoadURLContents(Handler handler, String cnt_type, String strURL) {
+    public LoadURLContents(Handler handler, String cnt_type, String strURL, Context context) {
         // The constructor accepts 3 arguments:
         // The handler to the creator of this object
         // The content type expected (e.g. "application/vnd.google-earth.kml+xml").
@@ -29,6 +35,7 @@ public class LoadURLContents implements Runnable {
         this.creator = handler;
         this.expectedContent_type = cnt_type;
         this.strURL = strURL;
+        this.context = context;
     }
 
     @SuppressLint("LongLogTag")
@@ -50,6 +57,18 @@ public class LoadURLContents implements Runnable {
         Log.d(MainActivity.LOADWEBTAG, threadAndClass + ": run() called, starting load");
 
         try {
+
+            //first we wait until we have connection
+
+
+            while(!isNetworkAvailable(context)){
+
+                Log.d(MainActivity.LOADWEBTAG,"NO CONNECTION");
+
+            }
+
+
+
             URL url = new URL(strURL);
             urlConnection = (HttpURLConnection) url.openConnection();
             String actualContentType = urlConnection.getContentType(); // content-type header from HTTP server
@@ -85,6 +104,9 @@ public class LoadURLContents implements Runnable {
                         Log.d(MainActivity.LOADWEBTAG, threadAndClass + ": load complete, sending message to UI thread");
                         if ("".equals(response) == false) {
                             msg_data.putString(MainActivity.HANDLER_KEY_JSON, response);
+                        }else{
+
+                            Log.d(MainActivity.LOADWEBTAG,"ERROR downloading JSON");
                         }
 
                         break;
@@ -100,5 +122,26 @@ public class LoadURLContents implements Runnable {
         }
 
         msg.sendToTarget();
+    }
+
+
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (connectivityManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+                Network activeNetwork = connectivityManager.getActiveNetwork();
+                return activeNetwork != null && connectivityManager.getNetworkCapabilities(activeNetwork) != null;
+            } else {
+
+                NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+                return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+            }
+        }
+
+        return false;
     }
 }

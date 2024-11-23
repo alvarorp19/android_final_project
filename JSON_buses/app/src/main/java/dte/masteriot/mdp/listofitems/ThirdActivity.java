@@ -209,15 +209,15 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
                 }else{
 
-                    //trying to reconnect with MQTT broker (This case shouldn't be reached)
+
                     try{
-                        Mqtt.connectToBroker();
+                        //Mqtt.connectToBroker();
 
                         //Notifying user
                         Toast.makeText(ThirdActivity.this, "UNABLE TO REQUEST THE STOP NOW!!", Toast.LENGTH_SHORT).show();
 
                         //disable step counter
-
+                        stepCount = 0;
 
 
                     }catch (Exception e){
@@ -259,7 +259,7 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
     private void loadSpecifictrayectory(){
 
         // Execute the loading task in background in order to get the JSON with a specific information lines:
-        LoadURLContents loadURLContents = new LoadURLContents(handler, CONTENT_TYPE_JSON, url_line_trajectory);
+        LoadURLContents loadURLContents = new LoadURLContents(handler, CONTENT_TYPE_JSON, url_line_trajectory,ThirdActivity.this);
         es.execute(loadURLContents);
     }
 

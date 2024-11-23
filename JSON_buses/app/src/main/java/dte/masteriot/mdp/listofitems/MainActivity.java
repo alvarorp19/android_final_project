@@ -4,6 +4,11 @@
 
 package dte.masteriot.mdp.listofitems;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -180,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
     private void loadAllLines() {
 
         // Execute the loading task in background in order to get the JSON with all information lines:
-        LoadURLContents loadURLContents = new LoadURLContents(handler, CONTENT_TYPE_JSON, URL_JSON_ALL_LINES_BUSES);
+        LoadURLContents loadURLContents = new LoadURLContents(handler, CONTENT_TYPE_JSON, URL_JSON_ALL_LINES_BUSES,MainActivity.this);
         es.execute(loadURLContents);
     }
 
@@ -222,7 +227,6 @@ public class MainActivity extends AppCompatActivity {
         es.execute(myMqtt);
 
     }
-
 
 
 }
