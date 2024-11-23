@@ -391,9 +391,10 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
                     StepSensorManager.unregisterListener(ThirdActivity.this,stepSensor);
 
-                    //notifying user with a vibration
+                    //notifying user with a vibration and message
 
                     performVibration();
+                    Toast.makeText(ThirdActivity.this, "STOP REQUESTED AT LINE " + lineSelected, Toast.LENGTH_SHORT).show();
 
                 }
             }

@@ -38,6 +38,7 @@
                 android:layout_alignParentRight="true"
                 android:background="@drawable/stop_button"
                 android:text="REQUEST STOP"
+                android:contentDescription="Request button. Press this button and shake the phone to stop the bus"
                 android:textStyle="bold" />
 
         </RelativeLayout>
