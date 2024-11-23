@@ -17,4 +17,4 @@
 - [X] refrescar el reciclerView de la tercera actividad cada 30 segundos
 - [ ] mirar porque no refresca bien el mapa
 - [X] mirar talkback
-- [ ] hacer que si se pulsa un elemento del tercer reciclerView no haga nada
+- [X] hacer que si se pulsa un elemento del tercer reciclerView no haga nada
