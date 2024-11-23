@@ -10,11 +10,11 @@
 #Bugs pendientes de corregir
 
 - [X] Comprobar como funciona la app cuando no hay conexion (los botones no funcionan bien)
-- [ ] hay lineas que no tienen ninguna ruta, arreglar (comprobar que se muestre el mensaje)
+- [X] hay lineas que no tienen ninguna ruta, arreglar (comprobar que se muestre el mensaje)
 - [X] si es de noche no hay datos en el JSON de los trayectos ,corregir
 - [X] Mantener el ultimo mensaje de MQTT recibido en la actividad 1 si nos habiamos conectado previamente
 - [X] utilizar el buzzer cada vez que se pulsa un boton
 - [X] refrescar el reciclerView de la tercera actividad cada 30 segundos
 - [ ] mirar porque no refresca bien el mapa
-- [ ] mirar talkback
+- [X] mirar talkback
 - [ ] hacer que si se pulsa un elemento del tercer reciclerView no haga nada
