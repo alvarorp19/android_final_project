@@ -123,6 +123,8 @@ public interface JSONParsing {
         String distanceToArrive = "";
         String lineNumber = "";
 
+        boolean ret = false;
+
 
         try{
 
@@ -167,17 +169,19 @@ public interface JSONParsing {
                 infoParada[8] = lineNumber;
 
                 TrayectoryDescriptionList.put(i,infoParada);
+
+                //at this point we have some useful info about at least one stop
+                ret = true;
             }
 
         }catch(Exception e){
 
             Log.d(MainActivity.PARSINGJSONTAG,"EXCEPCION " + e);
 
-            return false;
 
         }
 
-        return true;
+        return ret;
 
     }
 

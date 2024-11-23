@@ -353,9 +353,17 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
         for (Integer i = 0; i < this.markersMap.size();i++){
 
-            String parada [] = dataset2.getTrayectoryMap().get(i);
-            Marker newMarker = mMap.addMarker(new MarkerOptions().position(this.markersMap.get(i)).title(parada[0] + " (No: "+ parada[1] + ")" + ", " + parada[6] + " minutes left"));
-            //markerOnMap.add(i,newMarker);
+            try{
+
+                //some positions in markersMap could be empty then we need to wrap this zone of code with a try/catch
+
+                String parada [] = dataset2.getTrayectoryMap().get(i);
+                Marker newMarker = mMap.addMarker(new MarkerOptions().position(this.markersMap.get(i)).title(parada[0] + " (No: "+ parada[1] + ")" + ", " + parada[6] + " minutes left"));
+
+            }catch (Exception e){
+
+            }
+
         }
     }
 
