@@ -255,6 +255,17 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        //when changing to another activity we need to stop callback to prevent from memory leaks
+        if (handler2 != null) {
+            handler2.removeCallbacks(runnable);
+        }
+    }
+
+
 
     private void loadSpecifictrayectory(){
 
@@ -338,13 +349,17 @@ public class ThirdActivity extends AppCompatActivity implements JSONParsing, OnM
 
     private void getMarkersFromSelectedTrayectory(){
 
+        int j = 0;
+
         for (Integer i =0; i < dataset2.getTrayectoryMap().size();i++){
 
             try{
                 String parada [] = dataset2.getTrayectoryMap().get(i);
 
                 LatLng mapPosition = new LatLng(Double.parseDouble(parada[3]),Double.parseDouble(parada[2]));
-                this.markersMap.put(i,mapPosition);
+                this.markersMap.put(j,mapPosition);
+                j++;
+
                 Log.d("TERCERAACTIVIDAD",Double.parseDouble(parada[3]) + " " + Double.parseDouble(parada[2]));
 
             }catch (Exception e){

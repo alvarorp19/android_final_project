@@ -125,7 +125,7 @@ public interface JSONParsing {
 
         boolean ret = false;
 
-
+        Integer j = 0;
         try{
 
             JSONObject wholeJson = new JSONObject(string_json);
@@ -156,9 +156,7 @@ public interface JSONParsing {
                     distanceToArrive = jsonStopInfo.getString("distancia");
                     lineNumber = jsonStopInfo.getString("idlinea");
 
-                    Log.d(MainActivity.PARSINGJSONTAG,"Info parada " + descriptionParada + ": " + longitud + " "
-                            + latidud + " " + autobusEnParada + " " + idAutobus + " " + minutesToArrive + " "
-                            + distanceToArrive + " " + lineNumber);
+
 
                     infoParada[0] = descriptionParada;
                     infoParada[1] = idParada;
@@ -170,13 +168,20 @@ public interface JSONParsing {
                     infoParada[7] = distanceToArrive;
                     infoParada[8] = lineNumber;
 
-                    TrayectoryDescriptionList.put(i,infoParada);
+                    TrayectoryDescriptionList.put(j,infoParada);
+
+                    j++;
+
+                    Log.d(MainActivity.PARSINGJSONTAG,i + " Info parada linea " + descriptionParada + ": " + longitud + " "
+                            + latidud + " " + autobusEnParada + " " + idAutobus + " " + minutesToArrive + " "
+                            + distanceToArrive + " " + lineNumber);
 
                     //at this point we have some useful info about at least one stop
                     ret = true;
 
                 }catch (Exception e){
                     //nothing to do here
+                    Log.d("EXCEP", "error line " + i + " : " + e);
                 }
 
 

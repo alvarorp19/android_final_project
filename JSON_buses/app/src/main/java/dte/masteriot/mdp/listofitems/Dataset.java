@@ -91,10 +91,11 @@ public class Dataset implements JSONParsing{
         }else if (this.type == ThirdActivity.TYPE_SPECIFIC_TRAJECTORY_LIST){
             try {
                 successfulTrajectory = JSONParseATrajectory(this.content, this.TrayectoryMap);
-                for (Integer i = 0; i < TrayectoryMap.size(); ++i) {
+                for (Integer i = 0; i < this.TrayectoryMap.values().size(); ++i) {
                     try{
                         //some stops can contain a null array
                         String parada [] = TrayectoryMap.get(i);
+                        Log.d("TESTITEM",i + " nombre parada " + parada[0]);
                         listofitems.add(new Item(parada[6] + " min", parada[0] , (long) i, drawables_lines[getLinePositionInJson(parada[8])]));
                     }catch (Exception e){
                         //nothing to do here
